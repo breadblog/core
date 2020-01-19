@@ -8,7 +8,7 @@ defmodule Core.Contents.Post do
     field :body, :string
     field :description, :string
     field :title, :string
-    field :user_id, :binary_id
+    field :author, :binary_id
 
     timestamps()
   end
