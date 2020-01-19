@@ -7,7 +7,6 @@ defmodule Core.Accounts.User do
   schema "users" do
     field :name, :string
     field :username, :string
-    has_many :posts, Core.Post
 
     timestamps()
   end
