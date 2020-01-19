@@ -7,7 +7,6 @@ defmodule Core.Repo.Migrations.CreatePosts do
       add :title, :string
       add :description, :text
       add :body, :text
-      add :published, :boolean, default: false, null: false
 
       timestamps()
     end

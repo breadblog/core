@@ -40,5 +40,6 @@ defmodule CoreWeb.Endpoint do
     key: "_core_key",
     signing_salt: "63UAC4CA"
 
-  plug CoreWeb.Router
+  plug Absinthe.Plug,
+    schema: CoreWeb.Schema
 end
