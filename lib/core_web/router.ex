@@ -8,11 +8,6 @@ defmodule CoreWeb.Router do
   scope "/api", CoreWeb do
     pipe_through :api
 
-    forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: CoreWeb.Schema
-
-    forward "/", Absinthe.Plug,
-      schema: CoreWeb.Schema
-
+    resources "/users", UserController, except: [:new, :edit]
   end
 end

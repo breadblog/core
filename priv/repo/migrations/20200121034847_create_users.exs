@@ -4,8 +4,10 @@ defmodule Core.Repo.Migrations.CreateUsers do
   def change do
     create table(:users, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :name, :string
       add :username, :string
+      add :first_name, :string
+      add :last_name, :string
+      add :password, :string
 
       timestamps()
     end
