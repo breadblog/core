@@ -7,12 +7,13 @@ defmodule Core.Contents.PostTag do
   @primary_key false
   @foreign_key_type :binary_id
   schema "post_tags" do
-    belongs_to :post
-    belongs_to :tag
+    belongs_to :post, Post
+    belongs_to :tag, Tag
 
     timestamps()
   end
 
+  # TODO: ensure all entries are unique
   @doc false
   def changeset(post_tag, attrs) do
     post_tag

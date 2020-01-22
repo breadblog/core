@@ -214,22 +214,6 @@ defmodule Core.Contents do
   end
 
   @doc """
-  Gets a single post_tag.
-
-  Raises `Ecto.NoResultsError` if the Post tag does not exist.
-
-  ## Examples
-
-      iex> get_post_tag!(123)
-      %PostTag{}
-
-      iex> get_post_tag!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_post_tag!(id), do: Repo.get!(PostTag, id)
-
-  @doc """
   Creates a post_tag.
 
   ## Examples
@@ -245,24 +229,6 @@ defmodule Core.Contents do
     %PostTag{}
     |> PostTag.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a post_tag.
-
-  ## Examples
-
-      iex> update_post_tag(post_tag, %{field: new_value})
-      {:ok, %PostTag{}}
-
-      iex> update_post_tag(post_tag, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_post_tag(%PostTag{} = post_tag, attrs) do
-    post_tag
-    |> PostTag.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
