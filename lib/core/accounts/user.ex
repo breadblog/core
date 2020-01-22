@@ -1,7 +1,8 @@
 defmodule Core.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  import Bcrypt
+  alias Core.Contents.Post
+  alias Core.Accounts.Role
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -10,6 +11,8 @@ defmodule Core.Accounts.User do
     field :last_name, :string
     field :username, :string
     field :password, :string
+    has_many :posts, Post
+    many_to_many :roles, Role, join_through: "user_roles"
 
     timestamps()
   end

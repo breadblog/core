@@ -8,6 +8,9 @@ defmodule CoreWeb.Router do
   scope "/api", CoreWeb do
     pipe_through :api
 
-    resources "/users", UserController, except: [:new, :edit]
+    resources "/users", UserController, except: [:new, :edit, :index]
+    resources "/posts", PostController, except: [:new, :edit]
+    resources "/tags", TagController, except: [:new, :edit]
+    resources "/roles", RoleController, except: [:new, :edit]
   end
 end
