@@ -3,6 +3,18 @@ defmodule Core.Accounts do
   The Accounts context.
   """
 
+  # Things I want to be able to do:
+  #   * create first user in dev (public)
+  #   * create a user +roles (admin)
+  #   * get a list of authors (public)
+  #   * get author (public)
+  #   * get current user +roles (user)
+  #   * get other user +roles (admin)
+  #   * change other user roles (admin)
+  #
+  # - should be no way to create new role
+  # - should be no way to delete role
+
   import Ecto.Query, warn: false
   alias Core.Repo
 
@@ -22,7 +34,25 @@ defmodule Core.Accounts do
   end
 
   @doc """
+  Returns list of public users
+
+  ## Examples
+    
+      iex> list_authors()
+      [%User{}, ...]
+
+  """
+  def list_authors do
+    Repo.all(
+      from u in User,
+      preload: [roles: :name]
+    )
+  end
+
+  @doc """
   Gets a single user.
+
+  TODO: should not raise error -> { :ok... or { :error...
 
   Raises `Ecto.NoResultsError` if the User does not exist.
 

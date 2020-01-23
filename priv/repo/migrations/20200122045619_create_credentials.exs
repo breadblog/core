@@ -12,8 +12,8 @@ defmodule Core.Repo.Migrations.CreateCredentials do
 
     execute(
       """
-      insert into credentials ( user_id, password )
-      select id, password from users;
+      insert into credentials ( id, user_id, password, inserted_at, updated_at )
+      select uuid_generate_v4(), id, password, current_timestamp, current_timestamp from users;
       """,
       """
       update users, credentials

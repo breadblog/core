@@ -3,6 +3,13 @@ defmodule Core.Contents do
   The Contents context.
   """
 
+  # Things I want to be able to do:
+  #   * create post (author)
+  #   * fetch published author posts (public)
+  #   * fetch all author posts (author)
+  #   * create tag (admin)
+  #   * update tag (admin)
+
   import Ecto.Query, warn: false
   alias Core.Repo
 
