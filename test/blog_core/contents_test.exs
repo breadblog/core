@@ -185,4 +185,61 @@ defmodule BlogCore.ContentsTest do
       assert %Ecto.Changeset{} = Contents.change_post(post)
     end
   end
+
+  describe "post_tags" do
+    alias BlogCore.Contents.PostTag
+
+    @valid_attrs %{}
+    @update_attrs %{}
+    @invalid_attrs %{}
+
+    def post_tag_fixture(attrs \\ %{}) do
+      {:ok, post_tag} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Contents.create_post_tag()
+
+      post_tag
+    end
+
+    test "list_post_tags/0 returns all post_tags" do
+      post_tag = post_tag_fixture()
+      assert Contents.list_post_tags() == [post_tag]
+    end
+
+    test "get_post_tag!/1 returns the post_tag with given id" do
+      post_tag = post_tag_fixture()
+      assert Contents.get_post_tag!(post_tag.id) == post_tag
+    end
+
+    test "create_post_tag/1 with valid data creates a post_tag" do
+      assert {:ok, %PostTag{} = post_tag} = Contents.create_post_tag(@valid_attrs)
+    end
+
+    test "create_post_tag/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Contents.create_post_tag(@invalid_attrs)
+    end
+
+    test "update_post_tag/2 with valid data updates the post_tag" do
+      post_tag = post_tag_fixture()
+      assert {:ok, %PostTag{} = post_tag} = Contents.update_post_tag(post_tag, @update_attrs)
+    end
+
+    test "update_post_tag/2 with invalid data returns error changeset" do
+      post_tag = post_tag_fixture()
+      assert {:error, %Ecto.Changeset{}} = Contents.update_post_tag(post_tag, @invalid_attrs)
+      assert post_tag == Contents.get_post_tag!(post_tag.id)
+    end
+
+    test "delete_post_tag/1 deletes the post_tag" do
+      post_tag = post_tag_fixture()
+      assert {:ok, %PostTag{}} = Contents.delete_post_tag(post_tag)
+      assert_raise Ecto.NoResultsError, fn -> Contents.get_post_tag!(post_tag.id) end
+    end
+
+    test "change_post_tag/1 returns a post_tag changeset" do
+      post_tag = post_tag_fixture()
+      assert %Ecto.Changeset{} = Contents.change_post_tag(post_tag)
+    end
+  end
 end

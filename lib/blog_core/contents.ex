@@ -293,4 +293,100 @@ defmodule BlogCore.Contents do
   def change_post(%Post{} = post) do
     Post.changeset(post, %{})
   end
+
+  alias BlogCore.Contents.PostTag
+
+  @doc """
+  Returns the list of post_tags.
+
+  ## Examples
+
+      iex> list_post_tags()
+      [%PostTag{}, ...]
+
+  """
+  def list_post_tags do
+    Repo.all(PostTag)
+  end
+
+  @doc """
+  Gets a single post_tag.
+
+  Raises `Ecto.NoResultsError` if the Post tag does not exist.
+
+  ## Examples
+
+      iex> get_post_tag!(123)
+      %PostTag{}
+
+      iex> get_post_tag!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_post_tag!(id), do: Repo.get!(PostTag, id)
+
+  @doc """
+  Creates a post_tag.
+
+  ## Examples
+
+      iex> create_post_tag(%{field: value})
+      {:ok, %PostTag{}}
+
+      iex> create_post_tag(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_post_tag(attrs \\ %{}) do
+    %PostTag{}
+    |> PostTag.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a post_tag.
+
+  ## Examples
+
+      iex> update_post_tag(post_tag, %{field: new_value})
+      {:ok, %PostTag{}}
+
+      iex> update_post_tag(post_tag, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_post_tag(%PostTag{} = post_tag, attrs) do
+    post_tag
+    |> PostTag.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a post_tag.
+
+  ## Examples
+
+      iex> delete_post_tag(post_tag)
+      {:ok, %PostTag{}}
+
+      iex> delete_post_tag(post_tag)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_post_tag(%PostTag{} = post_tag) do
+    Repo.delete(post_tag)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking post_tag changes.
+
+  ## Examples
+
+      iex> change_post_tag(post_tag)
+      %Ecto.Changeset{source: %PostTag{}}
+
+  """
+  def change_post_tag(%PostTag{} = post_tag) do
+    PostTag.changeset(post_tag, %{})
+  end
 end
