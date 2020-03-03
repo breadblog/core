@@ -1,16 +1,16 @@
 use Mix.Config
 
 # Configure your database
-config :core, Core.Repo,
+config :blog_core, BlogCore.Repo,
   username: "postgres",
   password: "postgres",
-  database: "core_test",
+  database: "blog_core_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :core, CoreWeb.Endpoint,
+config :blog_core, BlogCoreWeb.Endpoint,
   http: [port: 4002],
   server: false
 

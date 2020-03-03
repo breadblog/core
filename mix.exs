@@ -1,9 +1,9 @@
-defmodule Core.MixProject do
+defmodule BlogCore.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :core,
+      app: :blog_core,
       version: "0.1.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule Core.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Core.Application, []},
+      mod: {BlogCore.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -40,8 +40,7 @@ defmodule Core.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
-      {:bcrypt_elixir, "~> 2.0"},
+      {:plug_cowboy, "~> 2.0"}
     ]
   end
 
