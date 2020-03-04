@@ -3,7 +3,7 @@ defmodule BlogCore.Repo.Migrations.CreateAuthors do
 
   def change do
     create table(:authors, primary_key: false) do
-      add :id, references(:users, on_delete: :delete_all, type: :binary_id)
+      add :id, references(:users, on_delete: :delete_all, type: :binary_id), primary_key: true
 
       timestamps()
     end

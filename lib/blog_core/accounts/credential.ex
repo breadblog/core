@@ -11,6 +11,7 @@ defmodule BlogCore.Accounts.Credential do
     timestamps()
   end
 
+  # TODO: hash the password
   @doc false
   def changeset(credential, attrs) do
     credential

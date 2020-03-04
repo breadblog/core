@@ -2,6 +2,8 @@ defmodule BlogCore.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias BlogCore.Accounts.Author
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -9,10 +11,12 @@ defmodule BlogCore.Accounts.User do
     field :email, :string
     field :name, :string
     field :username, :string
+    has_one :author, Author, foreign_key: :id
 
     timestamps()
   end
 
+  # TODO: validate the email
   @doc false
   def changeset(user, attrs) do
     user
