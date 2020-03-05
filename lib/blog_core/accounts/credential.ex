@@ -15,7 +15,7 @@ defmodule BlogCore.Accounts.Credential do
   @doc false
   def changeset(credential, attrs) do
     credential
-    |> cast(attrs, [:password])
-    |> validate_required([:password])
+    |> cast(attrs, [:password, :user_id])
+    |> validate_required([:password, :user_id])
   end
 end
