@@ -11,7 +11,7 @@ defmodule BlogCore.Accounts.User do
     field :email, :string
     field :name, :string
     field :username, :string
-    has_one :author, Author, foreign_key: :id
+    field :password, :string
 
     timestamps()
   end
@@ -20,8 +20,15 @@ defmodule BlogCore.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :username, :email, :bio])
-    |> validate_required([:name, :username, :email, :bio])
+    |> cast(attrs, [:name, :username, :email, :bio, :password])
+    |> validate_required([:name, :username, :password, :email, :bio])
+    # valid email
+    |> validate_format(:email, ~r/@/)
+    # strong password
+    |> validate_format(:password, ~r/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/)
+    # unique username
     |> unique_constraint(:username)
+    # hash password
+    |> update_change(:password, &Argon2.hash_pwd_salt/1)
   end
 end

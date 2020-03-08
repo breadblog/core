@@ -8,6 +8,8 @@ defmodule BlogCoreWeb.Router do
   scope "/api", BlogCoreWeb do
     pipe_through :api
 
-    resources "/users", UserController, except: [:new, :edit]
+    # TODO: add endpoints
+    # resources "/user", UserController, except: [:new, :edit]
+    # resources "/author", AuthorController, except: []
   end
 end

@@ -6,6 +6,7 @@ defmodule BlogCore.Repo.Migrations.CreateUsers do
       add :id, :binary_id, primary_key: true
       add :name, :string
       add :username, :string
+      add :password, :string
       add :email, :string
       add :bio, :string
 
