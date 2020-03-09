@@ -9,6 +9,7 @@ defmodule BlogCore.Accounts do
   alias BlogCore.Accounts.Author
   alias Monad.Result
   alias Monad.Maybe
+  alias BlogCore.Token
   import Monad
 
   @doc """
@@ -29,8 +30,8 @@ defmodule BlogCore.Accounts do
   defp create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
-    |> Repo.insert()
-    |> Result.from()
+    |> Repo.insert
+    |> Result.from
   end
 
   @doc """
@@ -51,14 +52,27 @@ defmodule BlogCore.Accounts do
   def create_author(%{user: user} = attrs) do
     Repo.transaction(fn ->
       create_user(user)
-      |> and_then(&(create_author_changeset(attrs, &1)))
+      |> map(&(create_author_changeset(attrs, &1)))
       |> and_then(&Repo.insert/1)
-      |> and_then(&preload_user/1)
+      |> map(&preload_user/1)
       |> Result.map_err(&Repo.rollback/1)
     end)
-    |> Result.from()
+    |> Result.from
   end
   def create_author(_), do: Result.err("author requires a 'user' property")
+
+  def create_test(username), do: create_author(%{user: %{username: username, password_hash: "The Gr34te$t", name: "Test", email: "email@example.com"}})
+
+  @doc """
+  Get a single user by their username
+  """
+  @spec get_user_from_username(String.t()) :: Maybe.t()
+  def get_user_from_username(username) do
+    (Repo.one from User,
+      where: [username: ^username]
+    )
+    |> Maybe.from()
+  end
 
   defp create_author_changeset(attrs, user) do
     attrs = attrs
@@ -135,24 +149,33 @@ defmodule BlogCore.Accounts do
     )
   end
 
-  defp filter_author(author) do
-    author
-    |> Maybe.from()
-    |> Monad.map(fn(map) ->
-      Map.update(map, :user, nil, &filter_user/1)
-    end)
-    |> Monad.unwrap()
+  @doc """
+  Check credentials and return a token
+  """
+  @spec login(String.t(), String.t()) :: Result.t()
+  def login(username, password) do
+    username
+    |> get_user_from_username()
+    |> Result.from_maybe("no user with username")
+    |> Monad.and_then(&check_pass(&1, password))
+    |> Monad.and_then(&generate_token/1)
   end
 
-  defp filter_user(user) do
-    user
-    |> Maybe.from()
-    |> Monad.map(&drop_password/1)
-    |> Monad.unwrap()
+  @spec check_pass(User.t(), String.t()) :: Result.t()
+  defp check_pass(user, password) do
+    case Argon2.check_pass(user, password) do
+      {:ok, user} -> Result.ok(user)
+      _ -> Result.err("username or password is incorrect")
+    end
   end
 
-  defp drop_password(%{password: _} = value) do
-    value
-    |> Map.drop([:password])
+  @spec generate_token(User.t()) :: Result.t()
+  defp generate_token(user) do
+    Token.generate_and_sign(%{"user_id" => user.id})
+    |> to_token_result
+    |> Result.map_err(fn -> "failed to generate token" end)
   end
+
+  defp to_token_result({:ok, token, _}), do: Result.ok(token)
+  defp to_token_result({:error, err}), do: Result.err(err)
 end

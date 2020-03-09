@@ -32,16 +32,4 @@ defmodule BlogCoreWeb.AuthorController do
       author -> json(conn, author)
     end
   end
-
-  def update(conn, %{"id" => id, "author" => author_params}) do
-    result = Accounts.get_author(id)
-    |> Monad.unwrap()
-
-    case result do
-      {:ok, author} -> json(conn, author)
-      # TODO: ensure no sensitive info here
-      {:error, %{errors: errors}} -> send_resp(conn, 400, errors)
-      _ -> send_resp(conn, 500, "failed")
-    end
-  end
 end

@@ -9,7 +9,8 @@ defmodule BlogCoreWeb.Router do
     pipe_through :api
 
     # TODO: add endpoints
-    # resources "/user", UserController, except: [:new, :edit]
-    # resources "/author", AuthorController, except: []
+    post "/login", LoginController, :login
+    resources "/user", UserController, only: [:update]
+    resources "/author", AuthorController, only: [:create, :show, :index, :update]
   end
 end

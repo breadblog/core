@@ -3,7 +3,7 @@ defmodule BlogCore.Accounts.Author do
   import Ecto.Changeset
 
   alias BlogCore.Accounts.User
-  alias BlogCore.Accounts.Post
+  alias BlogCore.Contents.Post
 
   @primary_key {:id, :binary_id, autogenerate: false}
   schema "authors" do
@@ -18,5 +18,14 @@ defmodule BlogCore.Accounts.Author do
     author
     |> cast(attrs, [:id])
     |> validate_required([:id])
+  end
+
+  defimpl Jason.Encoder, for: [BlogCore.Accounts.Author] do
+    def encode(struct, opts) do
+      struct
+      |> Map.from_struct()
+      |> Map.take([:user, :id])
+      |> Jason.Encode.map(opts)
+    end
   end
 end
