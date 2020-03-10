@@ -3,14 +3,24 @@ defmodule BlogCoreWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug BlogCoreWeb.Plugs.FetchUser
   end
 
+  # public
   scope "/api", BlogCoreWeb do
-    pipe_through :api
+    pipe_through [:api]
 
-    # TODO: add endpoints
     post "/login", LoginController, :login
+    post "/logout", LoginController, :logout
+    resources "/author", AuthorController, only: [:show, :index]
+  end
+
+  # private
+  scope "/api", BlogCoreWeb do
+    pipe_through [:api, BlogCoreWeb.Plugs.Authorize]
+
     resources "/user", UserController, only: [:update]
-    resources "/author", AuthorController, only: [:create, :show, :index, :update]
+    resources "/author", AuthorController, only: [:create, :update]
+    resources "/user", UserController, only: [:update]
   end
 end

@@ -33,7 +33,7 @@ defmodule BlogCore.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:monad, git: "git@github.com:Parasrah/elixir-monads.git", tag: "0.6"},
+      {:monad, git: "git@github.com:Parasrah/elixir-monads.git", tag: "0.7"},
       {:joken, "~> 2.0"},
       {:phoenix, "~> 1.4.11"},
       {:phoenix_pubsub, "~> 1.1"},

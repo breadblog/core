@@ -114,7 +114,7 @@ defmodule BlogCore.Accounts do
   """
   def get_user(id) do
     Repo.get(User, id)
-    |> Result.from()
+    |> Maybe.from
   end
 
   @doc """

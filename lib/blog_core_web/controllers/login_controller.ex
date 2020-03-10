@@ -12,10 +12,17 @@ defmodule BlogCoreWeb.LoginController do
     case result do
       {:ok, token} -> conn
         |> fetch_session
-        |> put_session("token", token)
-        |> send_resp(200, "OK")
+        |> put_session(:token, token)
+        |> send_resp(200, "ok")
       {:error, err} -> conn
-        |> send_resp(401, "UNAUTHORIZED")
+        |> send_resp(401, "unauthorized")
     end
+  end
+
+  def logout(conn, _params) do
+    conn
+    |> fetch_session
+    |> delete_session(:token)
+    |> send_resp(200, "ok")
   end
 end
