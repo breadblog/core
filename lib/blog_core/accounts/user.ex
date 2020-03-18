@@ -17,7 +17,7 @@ defmodule BlogCore.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:name, :username, :email, :bio, :password_hash])
+    |> cast(rename_password(attrs), [:name, :username, :email, :bio, :password_hash])
     |> validate_required([:name, :username, :password_hash, :email])
     # valid email
     |> validate_format(:email, ~r/@/)
@@ -29,6 +29,15 @@ defmodule BlogCore.Accounts.User do
     |> unique_constraint(:username)
     # hash password
     |> update_change(:password_hash, &Argon2.hash_pwd_salt/1)
+  end
+
+  defp rename_password(attrs) do
+    case Map.get(attrs, :password) do
+      nil -> attrs
+      password -> attrs
+      |> Map.drop([:password])
+      |> Map.put(:password_hash, password)
+    end
   end
 
   defimpl Jason.Encoder, for: [BlogCore.Accounts.User] do

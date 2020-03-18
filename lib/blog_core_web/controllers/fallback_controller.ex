@@ -6,17 +6,26 @@ defmodule BlogCoreWeb.FallbackController do
   """
   use BlogCoreWeb, :controller
 
-  def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+  def call(conn, {:error, %Ecto.Changeset{valid: false} = changeset}) do
     conn
-    |> put_status(:unprocessable_entity)
+    |> put_status(:bad_request)
     |> put_view(BlogCoreWeb.ChangesetView)
+    |> json(%{"json" => changeset})
     |> render("error.json", changeset: changeset)
+  end
+
+  def call(conn, {:error, :unauthorized}) do
+    conn
+    |> send_resp(403, :unauthorized)
   end
 
   def call(conn, {:error, :not_found}) do
     conn
-    |> put_status(:not_found)
-    |> put_view(BlogCoreWeb.ErrorView)
-    |> render(:"404")
+    |> send_resp(404, :not_found)
+  end
+
+  def call(conn, _) do
+    conn
+    |> send_resp(500, :server_error)
   end
 end

@@ -17,7 +17,8 @@ defmodule BlogCore.Accounts.Author do
   def changeset(author, attrs) do
     author
     |> cast(attrs, [:id])
-    |> validate_required([:id])
+    |> cast_assoc(:user, with: &User.changeset/2)
+    |> validate_required([:user])
   end
 
   defimpl Jason.Encoder, for: [BlogCore.Accounts.Author] do

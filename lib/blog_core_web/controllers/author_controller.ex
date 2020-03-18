@@ -12,24 +12,12 @@ defmodule BlogCoreWeb.AuthorController do
   end
 
   def create(conn, %{"author" => author_params}) do
-    result = Accounts.create_author(author_params)
-    |> Monad.unwrap()
-
-    case result do
-      {:ok, author} -> json(conn, author)
-      # TODO: ensure no sensitive info here
-      {:error, %{errors: errors}} -> send_resp(conn, 400, errors)
-      _ -> send_resp(conn, 500, "failed")
-    end
+    {:ok, author} = case Accounts.create_author(author_params)
+    json(conn, author)
   end
 
   def show(conn, %{"id" => id}) do
-    result = Accounts.get_author(id)
-    |> Monad.unwrap
-
-    case result do
-      nil -> send_resp(conn, 404, "not found")
-      author -> json(conn, author)
-    end
+    {:ok, author} = Accounts.get_author(id)
+    json(conn, author)
   end
 end
