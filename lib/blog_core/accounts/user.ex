@@ -19,15 +19,15 @@ defmodule BlogCore.Accounts.User do
     user
     |> cast(rename_password(attrs), [:name, :username, :email, :bio, :password_hash])
     |> validate_required([:name, :username, :password_hash, :email])
-    # valid email
+    |> validate_length(:bio, max: 512)
     |> validate_format(:email, ~r/@/)
-    # strong password
-    |> validate_format(:password_hash, ~r/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/)
-    # valid username
-    |> validate_format(:username, ~r/[a-zA-Z0-9]{5,16}/)
-    # unique username
+    |> validate_length(:email, max: 48)
+    |> validate_length(:name, min: 2, max: 48)
+    |> validate_format(:username, ~r/^[a-zA-Z0-9]*$/)
+    |> validate_length(:username, min: 5, max: 16)
     |> unique_constraint(:username)
-    # hash password
+    |> validate_format(:password_hash, ~r/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    |> validate_length(:password_hash, min: 8, max: 64)
     |> update_change(:password_hash, &Argon2.hash_pwd_salt/1)
   end
 

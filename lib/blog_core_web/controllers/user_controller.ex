@@ -8,7 +8,7 @@ defmodule BlogCoreWeb.UserController do
 
   def update(conn, %{"id" => id} = user_params) do
     user_result =
-      with {:ok, user} <- Accounts.get_user(id)
+      with {:ok, user} <- Accounts.get_user(id),
            {:ok, user} <- Accounts.update_user(user, user_params)
       do
         json(conn, user)

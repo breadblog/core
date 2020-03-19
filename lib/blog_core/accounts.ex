@@ -24,7 +24,7 @@ defmodule BlogCore.Accounts do
 
   """
   @spec create_user(map()) :: Result.t
-  defp create_user(attrs \\ %{}) do
+  def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert

@@ -6,9 +6,9 @@ defmodule BlogCore.AccountsTest do
   describe "users" do
     alias BlogCore.Accounts.User
 
-    @valid_attrs %{bio: "some bio", email: "some email", name: "some name", username: "some username"}
-    @update_attrs %{bio: "some updated bio", email: "some updated email", name: "some updated name", username: "some updated username"}
-    @invalid_attrs %{bio: nil, email: nil, name: nil, username: nil}
+    @valid_attrs %{bio: nil, email: "email@example.com", name: "bilbo", username: "dragonwhisperer", password: "Sm4ug$$$"}
+    @update_attrs %{bio: "some bio", email: "update@example.com", name: "Bilbo", username: "trollwhisperer", password: "Tr0ll$$$"}
+    @invalid_attrs %{bio: nil, email: "invalidemail", name: "k", username: "bilbo$"}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -19,168 +19,59 @@ defmodule BlogCore.AccountsTest do
       user
     end
 
-    test "list_users/0 returns all users" do
-      user = user_fixture()
-      assert Accounts.list_users() == [user]
-    end
-
-    test "get_user!/1 returns the user with given id" do
-      user = user_fixture()
-      assert Accounts.get_user!(user.id) == user
-    end
-
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.bio == "some bio"
-      assert user.email == "some email"
-      assert user.name == "some name"
-      assert user.username == "some username"
+      assert user.bio == nil
+      assert user.email == "email@example.com"
+      assert user.name == "bilbo"
+      assert user.username == "dragonwhisperer"
+      assert user.password_hash != "Sm4ug$$$"
+      assert Map.get(user, :password) == nil
     end
 
     test "create_user/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
     end
 
+    test "get_user/1 returns {:ok, user} when there is a match for id" do
+      user = user_fixture()
+      assert Accounts.get_user(user.id) == {:ok, user}
+    end
+
+    test "get_user/1 returns {:error, :not_found} when there is no match for id" do
+      assert {:error, :not_found} == Accounts.get_user("9438d85b-b3a0-427f-9301-b3fbcfcb17e7")
+    end
+
+    test "get_user_from_username/1 returns {:ok, user} when match exists" do
+      user = user_fixture()
+      assert Accounts.get_user_from_username(user.username) == {:ok, user}
+    end
+
+    test "get_user_from_username/1 returns {:error, :not_found} when match not found" do
+      assert {:error, :not_found} = Accounts.get_user_from_username("invalid_username")
+    end
+
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-      assert user.bio == "some updated bio"
-      assert user.email == "some updated email"
-      assert user.name == "some updated name"
-      assert user.username == "some updated username"
+      assert user.bio == "some bio"
+      assert user.email == "update@example.com"
+      assert user.name == "Bilbo"
+      assert user.username == "trollwhisperer"
+      assert user.password_hash != "Tr0ll$$$"
+      assert Map.get(user, :password) == nil
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user == Accounts.get_user!(user.id)
-    end
-
-    test "delete_user/1 deletes the user" do
-      user = user_fixture()
-      assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.id) end
-    end
-
-    test "change_user/1 returns a user changeset" do
-      user = user_fixture()
-      assert %Ecto.Changeset{} = Accounts.change_user(user)
-    end
-  end
-
-  describe "credentials" do
-    alias BlogCore.Accounts.Credential
-
-    @valid_attrs %{password: "some password"}
-    @update_attrs %{password: "some updated password"}
-    @invalid_attrs %{password: nil}
-
-    def credential_fixture(attrs \\ %{}) do
-      {:ok, credential} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_credential()
-
-      credential
-    end
-
-    test "list_credentials/0 returns all credentials" do
-      credential = credential_fixture()
-      assert Accounts.list_credentials() == [credential]
-    end
-
-    test "get_credential!/1 returns the credential with given id" do
-      credential = credential_fixture()
-      assert Accounts.get_credential!(credential.id) == credential
-    end
-
-    test "create_credential/1 with valid data creates a credential" do
-      assert {:ok, %Credential{} = credential} = Accounts.create_credential(@valid_attrs)
-      assert credential.password == "some password"
-    end
-
-    test "create_credential/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_credential(@invalid_attrs)
-    end
-
-    test "update_credential/2 with valid data updates the credential" do
-      credential = credential_fixture()
-      assert {:ok, %Credential{} = credential} = Accounts.update_credential(credential, @update_attrs)
-      assert credential.password == "some updated password"
-    end
-
-    test "update_credential/2 with invalid data returns error changeset" do
-      credential = credential_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_credential(credential, @invalid_attrs)
-      assert credential == Accounts.get_credential!(credential.id)
-    end
-
-    test "delete_credential/1 deletes the credential" do
-      credential = credential_fixture()
-      assert {:ok, %Credential{}} = Accounts.delete_credential(credential)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_credential!(credential.id) end
-    end
-
-    test "change_credential/1 returns a credential changeset" do
-      credential = credential_fixture()
-      assert %Ecto.Changeset{} = Accounts.change_credential(credential)
+      assert Accounts.get_user(user.id) == {:ok, user}
     end
   end
 
   describe "authors" do
     alias BlogCore.Accounts.Author
 
-    @valid_attrs %{}
-    @update_attrs %{}
-    @invalid_attrs %{}
-
-    def author_fixture(attrs \\ %{}) do
-      {:ok, author} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_author()
-
-      author
-    end
-
-    test "list_authors/0 returns all authors" do
-      author = author_fixture()
-      assert Accounts.list_authors() == [author]
-    end
-
-    test "get_author!/1 returns the author with given id" do
-      author = author_fixture()
-      assert Accounts.get_author!(author.id) == author
-    end
-
-    test "create_author/1 with valid data creates a author" do
-      assert {:ok, %Author{} = author} = Accounts.create_author(@valid_attrs)
-    end
-
-    test "create_author/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_author(@invalid_attrs)
-    end
-
-    test "update_author/2 with valid data updates the author" do
-      author = author_fixture()
-      assert {:ok, %Author{} = author} = Accounts.update_author(author, @update_attrs)
-    end
-
-    test "update_author/2 with invalid data returns error changeset" do
-      author = author_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_author(author, @invalid_attrs)
-      assert author == Accounts.get_author!(author.id)
-    end
-
-    test "delete_author/1 deletes the author" do
-      author = author_fixture()
-      assert {:ok, %Author{}} = Accounts.delete_author(author)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_author!(author.id) end
-    end
-
-    test "change_author/1 returns a author changeset" do
-      author = author_fixture()
-      assert %Ecto.Changeset{} = Accounts.change_author(author)
-    end
+    # TODO: test authors
   end
 end

@@ -12,7 +12,7 @@ defmodule BlogCoreWeb.AuthorController do
   end
 
   def create(conn, %{"author" => author_params}) do
-    {:ok, author} = case Accounts.create_author(author_params)
+    {:ok, author} = Accounts.create_author(author_params)
     json(conn, author)
   end
 
