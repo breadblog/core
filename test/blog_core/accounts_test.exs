@@ -71,7 +71,5 @@ defmodule BlogCore.AccountsTest do
 
   describe "authors" do
     alias BlogCore.Accounts.Author
-
-    # TODO: test authors
   end
 end

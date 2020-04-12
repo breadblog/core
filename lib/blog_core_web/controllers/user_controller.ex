@@ -6,7 +6,7 @@ defmodule BlogCoreWeb.UserController do
 
   action_fallback BlogCoreWeb.FallbackController
 
-  def update(conn, %{"id" => id} = user_params) do
+  def update(conn, %{"user" => %{"id" => id} = user_params}) do
     user_result =
       with {:ok, user} <- Accounts.get_user(id),
            {:ok, user} <- Accounts.update_user(user, user_params)

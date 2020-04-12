@@ -20,5 +20,8 @@ defmodule BlogCore.Contents.Tag do
     tag
     |> cast(attrs, [:name, :description])
     |> validate_required([:name, :description])
+    |> validate_length(:name, min: 3, max: 10)
+    |> validate_length(:description, min: 9, max: 64)
+    |> unique_constraint(:name)
   end
 end

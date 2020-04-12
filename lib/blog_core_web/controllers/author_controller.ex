@@ -11,13 +11,15 @@ defmodule BlogCoreWeb.AuthorController do
     json(conn, authors)
   end
 
-  def create(conn, %{"author" => author_params}) do
-    {:ok, author} = Accounts.create_author(author_params)
-    json(conn, author)
+  def create(conn, %{"author" => author_params = %Author{}}) do
+    with {:ok, author} <- Accounts.create_author(author_params) do
+      json(conn, author)
+    end
   end
 
   def show(conn, %{"id" => id}) do
-    {:ok, author} = Accounts.get_author(id)
-    json(conn, author)
+    with {:ok, author} <- Accounts.get_author(id) do
+      json(conn, author)
+    end
   end
 end

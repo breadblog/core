@@ -20,13 +20,4 @@ defmodule BlogCore.Accounts.Author do
     |> cast_assoc(:user, with: &User.changeset/2)
     |> validate_required([:user])
   end
-
-  defimpl Jason.Encoder, for: [BlogCore.Accounts.Author] do
-    def encode(struct, opts) do
-      struct
-      |> Map.from_struct()
-      |> Map.take([:user, :id])
-      |> Jason.Encode.map(opts)
-    end
-  end
 end

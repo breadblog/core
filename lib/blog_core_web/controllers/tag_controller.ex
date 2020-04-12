@@ -8,36 +8,26 @@ defmodule BlogCoreWeb.TagController do
 
   def index(conn, _params) do
     tags = Contents.list_tags()
-    render(conn, "index.json", tags: tags)
+    json(conn, tags)
   end
 
   def create(conn, %{"tag" => tag_params}) do
     with {:ok, %Tag{} = tag} <- Contents.create_tag(tag_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", Routes.tag_path(conn, :show, tag))
-      |> render("show.json", tag: tag)
+      json(conn, tag)
     end
-  end
-
-  def show(conn, %{"id" => id}) do
-    tag = Contents.get_tag!(id)
-    render(conn, "show.json", tag: tag)
   end
 
   def update(conn, %{"id" => id, "tag" => tag_params}) do
-    tag = Contents.get_tag!(id)
-
-    with {:ok, %Tag{} = tag} <- Contents.update_tag(tag, tag_params) do
-      render(conn, "show.json", tag: tag)
-    end
+    with {:ok, tag = %Tag{}} <- Contents.get_tag(id),
+         {:ok, tag = %Tag{}} <- Contents.update_tag(tag, tag_params),
+         do: json(conn, tag)
   end
 
   def delete(conn, %{"id" => id}) do
-    tag = Contents.get_tag!(id)
-
-    with {:ok, %Tag{}} <- Contents.delete_tag(tag) do
-      send_resp(conn, :no_content, "")
-    end
+    with {:ok, %Tag{} = tag} <- Contents.get_tag(id),
+         {:ok, _} <- Contents.delete_tag(tag),
+         do: conn
+         |> put_status(200)
+         |> send_resp
   end
 end

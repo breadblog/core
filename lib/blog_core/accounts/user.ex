@@ -2,6 +2,8 @@ defmodule BlogCore.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias BlogCore.Accounts.User
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -37,15 +39,6 @@ defmodule BlogCore.Accounts.User do
       password -> attrs
       |> Map.drop([:password])
       |> Map.put(:password_hash, password)
-    end
-  end
-
-  defimpl Jason.Encoder, for: [BlogCore.Accounts.User] do
-    def encode(struct, opts) do
-      struct
-      |> Map.from_struct()
-      |> Map.take([:bio, :email, :name, :username, :id])
-      |> Jason.Encode.map(opts)
     end
   end
 end

@@ -2,11 +2,15 @@ defmodule BlogCore.Contents.Comment do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias BlogCore.Accounts.User
+  alias BlogCore.Contents.Post
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "comments" do
     field :value, :string
-    field :user_id, :binary_id
+    belongs_to :user, User
+    belongs_to :post, Post
 
     timestamps()
   end

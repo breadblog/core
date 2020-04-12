@@ -144,7 +144,7 @@ defmodule BlogCore.Accounts do
   """
   @spec login(String.t(), String.t()) :: {:ok, String.t()} | {:error, any()}
   def login(username, password) do
-    with %User{} = user <- get_user_from_username(username),
+    with {:ok, %User{} = user} <- get_user_from_username(username),
          :ok <- check_pass(user, password)
     do
       generate_token(user)
@@ -154,7 +154,7 @@ defmodule BlogCore.Accounts do
   @spec check_pass(User.t(), String.t()) :: :ok | {:error, String.t()}
   defp check_pass(user, password) do
     case Argon2.check_pass(user, password) do
-      {:ok, _} = result -> :ok
+      {:ok, _} -> :ok
       {:error, _} -> {:error, "username or password is incorrect"}
     end
   end
@@ -166,4 +166,37 @@ defmodule BlogCore.Accounts do
       {:error, _} = result -> result
     end
   end
+
+  def display(%User{} = user, %User{} = curr_user) do
+    user_id = user.id
+    case curr_user do
+      %User{id: ^user_id} -> display_private(user)
+      _ -> display_public(user)
+    end
+  end
+
+  def display(%Author{} = author, %User{} = curr_user) do
+    with %Author{} = author <- Repo.preload(author, :user),
+         %User{} = user <- author.user,
+         do: display(user, curr_user)
+  end
+
+  defp display_public(%User{} = user) do
+    %{
+      "bio" => user.bio,
+      "email" => user.email,
+      "name" => user.name,
+      "username" => user.username,
+    }
+  end
+
+  defp display_private(%User{} = user) do
+    %{
+      "bio" => user.bio,
+      "email" => user.email,
+      "name" => user.name,
+      "username" => user.username,
+    }
+  end
+
 end
