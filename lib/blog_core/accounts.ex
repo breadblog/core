@@ -167,36 +167,34 @@ defmodule BlogCore.Accounts do
     end
   end
 
+  def display(%User{} = user, nil) do
+    %{
+      "id" => user.id,
+      "bio" => user.bio,
+      "name" => user.name,
+      "username" => user.username,
+    }
+  end
+
   def display(%User{} = user, %User{} = curr_user) do
-    user_id = user.id
-    case curr_user do
-      %User{id: ^user_id} -> display_private(user)
-      _ -> display_public(user)
+    if user.id == curr_user.id do
+      %{
+        "id" => user.id,
+        "bio" => user.bio,
+        "email" => user.email,
+        "name" => user.name,
+        "username" => user.username,
+      }
+    else
+      display(user, nil)
     end
   end
 
   def display(%Author{} = author, %User{} = curr_user) do
-    with %Author{} = author <- Repo.preload(author, :user),
-         %User{} = user <- author.user,
-         do: display(user, curr_user)
-  end
-
-  defp display_public(%User{} = user) do
+    author = Repo.preload author, :user
     %{
-      "bio" => user.bio,
-      "email" => user.email,
-      "name" => user.name,
-      "username" => user.username,
+      "id" => author.id,
+      "user" => display(author.user, curr_user),
     }
   end
-
-  defp display_private(%User{} = user) do
-    %{
-      "bio" => user.bio,
-      "email" => user.email,
-      "name" => user.name,
-      "username" => user.username,
-    }
-  end
-
 end

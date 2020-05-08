@@ -2,7 +2,7 @@ defmodule BlogCore.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias BlogCore.Accounts.User
+  alias BlogCore.Accounts.Author
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -12,6 +12,7 @@ defmodule BlogCore.Accounts.User do
     field :name, :string
     field :username, :string
     field :password_hash, :string
+    has_one :author, Author, foreign_key: :id
 
     timestamps()
   end

@@ -8,6 +8,7 @@ defmodule BlogCore.Contents do
   alias BlogCore.Repo
   alias BlogCore.Contents.Post
   alias BlogCore.Contents.Tag
+  alias BlogCore.Accounts
   alias BlogCore.Accounts.Author
   alias BlogCore.Accounts.User
 
@@ -74,28 +75,55 @@ defmodule BlogCore.Contents do
     Repo.delete(tag)
   end
 
-  def display(%Post{} = post, %User{} = curr_user) do
-
+  def user_id(%Post{} = post) do
+    post.author_id
   end
 
-  def display(%Tag{} = tag, %User{} = curr_user) do
+  def display(%Tag{} = tag, _) do
     %{
       "name" => tag.name,
       "description" => tag.description,
     }
   end
 
-  defp display_public(%Post{} = post) do
-    %{
-      "body" => post.body,
-      "description" => post.description,
-      "title" => post.title,
-      "tags" => ,
-      "author" => ,
-    }
+  def display(%Post{} = post, nil) do
+    if post.published do
+      %{
+        "body" => post.body,
+        "description" => post.description,
+        "title" => post.title,
+        "tags" => post.tags,
+        "author" => Accounts.display(post.author, nil),
+      }
+    end
   end
 
-  defp display_private(%Post{} = post) do
-
+  def display(%Post{} = post, %User{} = curr_user) do
+    post = Repo.preload post, [:tags, :author, :comments]
+    curr_user_id = curr_user.id
+    case post do
+      %Post{author: %Author{id: ^curr_user_id}} ->
+        %{
+          body: post.body,
+          description: post.description,
+          title: post.title,
+          published: post.published,
+          tags: Enum.map(post.tags, &(display(&1, curr_user))),
+          author: Accounts.display(post.author, curr_user),
+          comments: Enum.map(post.comments, &(display(&1, curr_user)))
+        }
+      %Post{published: true} ->
+        %{
+          body: post.body,
+          description: post.description,
+          title: post.title,
+          published: post.published,
+          tags: Enum.map(post.tags, &(display(&1, curr_user))),
+          author: Accounts.display(post.author, curr_user),
+          comments: Enum.map(post.comments, &(display(&1, curr_user)))
+        }
+      _ ->
+        nil
+    end
   end
 end

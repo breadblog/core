@@ -15,7 +15,7 @@ defmodule BlogCore.Contents.Post do
     field :title, :string
     field :published, :boolean
     many_to_many :tags, Tag, join_through: PostTag
-    has_one :author, Author
+    belongs_to :author, Author
     has_many :comments, Comment
 
     timestamps()

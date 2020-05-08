@@ -16,16 +16,16 @@ defmodule BlogCoreWeb.FallbackController do
 
   def call(conn, {:error, :unauthorized}) do
     conn
-    |> send_resp(403, :unauthorized)
+    |> send_resp(403, "Unauthorized")
   end
 
   def call(conn, {:error, :not_found}) do
     conn
-    |> send_resp(404, :not_found)
+    |> send_resp(404, "Not Found")
   end
 
   def call(conn, _) do
     conn
-    |> send_resp(500, :server_error)
+    |> send_resp(500, "Internal Server Error")
   end
 end

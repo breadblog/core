@@ -15,7 +15,6 @@ defmodule BlogCore.AccountsTest do
         attrs
         |> Enum.into(@valid_attrs)
         |> Accounts.create_user()
-
       user
     end
 

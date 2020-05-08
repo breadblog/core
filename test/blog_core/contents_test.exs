@@ -126,9 +126,24 @@ defmodule BlogCore.ContentsTest do
   describe "posts" do
     alias BlogCore.Contents.Post
 
-    @valid_attrs %{body: "some body", description: "some description", title: "some title"}
-    @update_attrs %{body: "some updated body", description: "some updated description", title: "some updated title"}
-    @invalid_attrs %{body: nil, description: nil, title: nil}
+    @valid_attrs %{
+      body: "some body",
+      description: "some description",
+      title: "some title",
+      published: false,
+    }
+    @update_attrs %{
+      body: "some updated body",
+      description: "some updated description",
+      title: "some updated title",
+      published: true
+    }
+    @invalid_attrs %{
+      body: nil,
+      description: nil,
+      title: nil,
+      published: nil
+    }
 
     def post_fixture(attrs \\ %{}) do
       {:ok, post} =
