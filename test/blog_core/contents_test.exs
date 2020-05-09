@@ -1,5 +1,5 @@
 defmodule BlogCore.ContentsTest do
-  use BlogCore.DataCase
+  use BlogCore.DataCase, async: true
   import BlogCore.Factory
 
   alias BlogCore.Contents
@@ -66,7 +66,6 @@ defmodule BlogCore.ContentsTest do
   describe "tags" do
     # alias BlogCore.Contents.Tag
 
-    # @valid_attrs %{description: "some description", name: "some name"}
     # @update_attrs %{description: "some updated description", name: "some updated name"}
     # @invalid_attrs %{description: nil, name: nil}
 
@@ -150,11 +149,13 @@ defmodule BlogCore.ContentsTest do
 
     test "list_posts/0 returns all published posts" do
       post = post_fixture(%{published: true})
-      assert Contents.list_posts() == [post]
+      list = Contents.list_posts()
+      assert length(list) == 1
+      compare(Enum.at(list, 0), post)
     end
 
     test "list_posts/0 does not return unpublished posts" do
-      post = post_fixture(%{published: false})
+      post_fixture(%{published: false})
       assert Contents.list_posts() == []
     end
 

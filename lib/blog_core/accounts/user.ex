@@ -11,7 +11,7 @@ defmodule BlogCore.Accounts.User do
     field :email, :string
     field :name, :string
     field :username, :string
-    field :password_hash, :string
+    field :password, :string
     has_one :author, Author, foreign_key: :id
 
     timestamps()
@@ -20,8 +20,8 @@ defmodule BlogCore.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(rename_password(attrs), [:name, :username, :email, :bio, :password_hash])
-    |> validate_required([:name, :username, :password_hash, :email])
+    |> cast(attrs, [:name, :username, :email, :bio, :password])
+    |> validate_required([:name, :username, :password, :email])
     |> validate_length(:bio, max: 512)
     |> validate_format(:email, ~r/@/)
     |> validate_length(:email, max: 48)
@@ -29,17 +29,8 @@ defmodule BlogCore.Accounts.User do
     |> validate_format(:username, ~r/^[a-zA-Z0-9]*$/)
     |> validate_length(:username, min: 5, max: 16)
     |> unique_constraint(:username)
-    |> validate_format(:password_hash, ~r/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
-    |> validate_length(:password_hash, min: 8, max: 64)
-    |> update_change(:password_hash, &Argon2.hash_pwd_salt/1)
-  end
-
-  defp rename_password(attrs) do
-    case Map.get(attrs, :password) do
-      nil -> attrs
-      password -> attrs
-      |> Map.drop([:password])
-      |> Map.put(:password_hash, password)
-    end
+    |> validate_format(:password, ~r/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
+    |> validate_length(:password, min: 8, max: 64)
+    |> update_change(:password, &Argon2.hash_pwd_salt/1)
   end
 end

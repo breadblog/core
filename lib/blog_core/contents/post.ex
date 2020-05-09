@@ -24,9 +24,9 @@ defmodule BlogCore.Contents.Post do
   def changeset(post, attrs) do
     post
     |> cast(attrs, [:title, :description, :body, :published])
-    |> cast_assoc(:tags)
-    |> cast_assoc(:author)
+    |> cast_assoc(:tags, required: true)
+    |> cast_assoc(:author, required: true)
     |> cast_assoc(:comments, required: true)
-    |> validate_required([:title, :description, :body, :tags, :author, :comments])
+    |> validate_required([:title, :description, :body, :published])
   end
 end

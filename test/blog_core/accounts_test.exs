@@ -1,5 +1,5 @@
 defmodule BlogCore.AccountsTest do
-  use BlogCore.DataCase
+  use BlogCore.DataCase, async: true
   import BlogCore.Factory
 
   alias BlogCore.Accounts
@@ -11,8 +11,7 @@ defmodule BlogCore.AccountsTest do
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
-        attrs
-        |> Enum.into(build(:user))
+        build(:user, attrs)
         |> Accounts.create_user()
 
       user
@@ -25,8 +24,7 @@ defmodule BlogCore.AccountsTest do
       assert actual.email == expected.email
       assert actual.name == expected.name
       assert actual.username == expected.username
-      assert actual.password_hash != expected.password
-      assert Map.get(actual, :password) == nil
+      assert actual.password != expected.password
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -59,8 +57,7 @@ defmodule BlogCore.AccountsTest do
       assert user.email == update_attrs.email
       assert user.name == update_attrs.name
       assert user.username == update_attrs.username
-      assert user.password_hash != update_attrs.password
-      assert Map.get(user, :password) == nil
+      assert user.password != update_attrs.password
     end
 
     test "update_user/2 with invalid data returns error changeset" do

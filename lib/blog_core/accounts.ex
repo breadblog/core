@@ -9,8 +9,6 @@ defmodule BlogCore.Accounts do
   alias BlogCore.Accounts.Author
   alias BlogCore.Token
 
-  # TODO: fix fixtures see contents
-
   @doc """
   Creates a user
 

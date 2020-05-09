@@ -16,7 +16,7 @@ defmodule BlogCore.Contents do
     Repo.all(
       from p in Post,
       where: p.published == true,
-      preload: [:author, :tags, :comments]
+      preload: [{:author, :user}, :tags, :comments]
     )
   end
 
@@ -24,6 +24,7 @@ defmodule BlogCore.Contents do
     Repo.all(
       from p in Post,
         where: p.author_id == ^author.id,
+        where: p.published == true,
         preload: [:author, :tags, :comments]
     )
   end
