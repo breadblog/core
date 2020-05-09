@@ -10,5 +10,6 @@ defmodule BlogCore.Repo.Migrations.CreateTags do
       timestamps()
     end
 
+    create unique_index(:tags, [:name])
   end
 end

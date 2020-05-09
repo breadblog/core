@@ -4,7 +4,6 @@ defmodule BlogCore.Contents.Post do
 
   alias BlogCore.Accounts.Author
   alias BlogCore.Contents.Tag
-  alias BlogCore.Contents.PostTag
   alias BlogCore.Contents.Comment
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -14,7 +13,7 @@ defmodule BlogCore.Contents.Post do
     field :description, :string
     field :title, :string
     field :published, :boolean
-    many_to_many :tags, Tag, join_through: PostTag
+    many_to_many :tags, Tag, join_through: "post_tags"
     belongs_to :author, Author
     has_many :comments, Comment
 
@@ -24,10 +23,10 @@ defmodule BlogCore.Contents.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :description, :body])
-    |> cast_assoc(:tags, with: &Tag.changeset/2)
-    |> cast_assoc(:author, with: &Author.changeset/2)
-    |> cast_assoc(:coments, with: &Comment.changeset/2)
+    |> cast(attrs, [:title, :description, :body, :published])
+    |> cast_assoc(:tags)
+    |> cast_assoc(:author)
+    |> cast_assoc(:comments, required: true)
     |> validate_required([:title, :description, :body, :tags, :author, :comments])
   end
 end

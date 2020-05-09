@@ -9,6 +9,8 @@ defmodule BlogCore.Accounts do
   alias BlogCore.Accounts.Author
   alias BlogCore.Token
 
+  # TODO: fix fixtures see contents
+
   @doc """
   Creates a user
 
@@ -23,11 +25,11 @@ defmodule BlogCore.Accounts do
     })
 
   """
-  @spec create_user(map()) :: Result.t
+  @spec create_user(map()) :: Result.t()
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
-    |> Repo.insert
+    |> Repo.insert()
   end
 
   @doc """
@@ -49,9 +51,10 @@ defmodule BlogCore.Accounts do
   @spec create_author(map()) :: {:ok, Author.t()} | {:error, any()}
   def create_author(attrs \\ %{}) do
     Repo.transaction(fn ->
-      result = %Author{}
-               |> Author.changeset(attrs)
-               |> Repo.insert
+      result =
+        %Author{}
+        |> Author.changeset(attrs)
+        |> Repo.insert()
 
       case result do
         {:ok, output} -> output
@@ -65,8 +68,11 @@ defmodule BlogCore.Accounts do
   """
   @spec get_user_from_username(String.t()) :: {:ok, User.t()} | {:error, :not_found}
   def get_user_from_username(username) do
-    result = Repo.one from User,
-      where: [username: ^username]
+    result =
+      Repo.one(
+        from User,
+          where: [username: ^username]
+      )
 
     case result do
       nil -> {:error, :not_found}
@@ -75,10 +81,20 @@ defmodule BlogCore.Accounts do
   end
 
   @doc """
+  Get a single author by their username
+  """
+  @spec get_author_from_username(String.t()) :: {:ok, Author.t()} | {:error, :not_found}
+  def get_author_from_username(username) do
+    with {:ok, user} <- get_user_from_username(username),
+         user <- Repo.preload(user, :author),
+         do: {:ok, user.author}
+  end
+
+  @doc """
   Update a user
 
   ## Examples
-  
+
     iex> update_user(user, %{name: "Ted Evaline Moseby"})
 
   """
@@ -89,11 +105,17 @@ defmodule BlogCore.Accounts do
     |> Repo.update()
   end
 
+  def update_author(%Author{} = author, attrs) do
+    author
+    |> Author.changeset(attrs)
+    |> Repo.update()
+  end
+
   @doc """
   Get a user
 
   ## Examples
-    
+
     iex> get_user("e7086dd8-e3db-4f3a-a366-483dcf80ba43")
 
   """
@@ -115,9 +137,12 @@ defmodule BlogCore.Accounts do
   """
   @spec get_author(String.t()) :: {:ok, Author.t()} | {:error, :not_found}
   def get_author(id) do
-    result = Repo.one from a in Author,
-      where: [id: ^id],
-      preload: [:user]
+    result =
+      Repo.one(
+        from a in Author,
+          where: [id: ^id],
+          preload: [:user]
+      )
 
     case result do
       nil -> {:error, :not_found}
@@ -129,14 +154,16 @@ defmodule BlogCore.Accounts do
   Get all authors
 
   ## Examples
-  
+
     iex> list_authors()
 
   """
   @spec list_authors() :: list(Author.t())
   def list_authors() do
-    Repo.all from a in Author,
-      preload: [:user]
+    Repo.all(
+      from a in Author,
+        preload: [:user]
+    )
   end
 
   @doc """
@@ -145,8 +172,7 @@ defmodule BlogCore.Accounts do
   @spec login(String.t(), String.t()) :: {:ok, String.t()} | {:error, any()}
   def login(username, password) do
     with {:ok, %User{} = user} <- get_user_from_username(username),
-         :ok <- check_pass(user, password)
-    do
+         :ok <- check_pass(user, password) do
       generate_token(user)
     end
   end
@@ -172,7 +198,7 @@ defmodule BlogCore.Accounts do
       "id" => user.id,
       "bio" => user.bio,
       "name" => user.name,
-      "username" => user.username,
+      "username" => user.username
     }
   end
 
@@ -183,7 +209,7 @@ defmodule BlogCore.Accounts do
         "bio" => user.bio,
         "email" => user.email,
         "name" => user.name,
-        "username" => user.username,
+        "username" => user.username
       }
     else
       display(user, nil)
@@ -191,10 +217,11 @@ defmodule BlogCore.Accounts do
   end
 
   def display(%Author{} = author, %User{} = curr_user) do
-    author = Repo.preload author, :user
+    author = Repo.preload(author, :user)
+
     %{
       "id" => author.id,
-      "user" => display(author.user, curr_user),
+      "user" => display(author.user, curr_user)
     }
   end
 end
