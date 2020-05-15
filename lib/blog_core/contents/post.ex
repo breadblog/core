@@ -13,9 +13,9 @@ defmodule BlogCore.Contents.Post do
     field :description, :string
     field :title, :string
     field :published, :boolean
-    many_to_many :tags, Tag, join_through: "post_tags"
+    many_to_many :tags, Tag, join_through: "post_tags", on_replace: :delete
     belongs_to :author, Author
-    has_many :comments, Comment
+    has_many :comments, Comment, on_replace: :nilify
 
     timestamps()
   end
@@ -28,5 +28,7 @@ defmodule BlogCore.Contents.Post do
     |> cast_assoc(:author, required: true)
     |> cast_assoc(:comments, required: true)
     |> validate_required([:title, :description, :body, :published])
+    |> validate_length(:title, min: 3, max: 100)
+    |> validate_length(:description, min: 3, max: 1000)
   end
 end

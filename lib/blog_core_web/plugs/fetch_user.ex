@@ -18,8 +18,9 @@ defmodule BlogCoreWeb.Plugs.FetchUser do
     end
     case user do
       nil -> conn
+      |> assign(:current_user, nil)
       user -> conn
-      |> assign(:current_user, user.id)
+      |> assign(:current_user, user)
     end
   end
 end

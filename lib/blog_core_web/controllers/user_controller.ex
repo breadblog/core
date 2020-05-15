@@ -2,7 +2,6 @@ defmodule BlogCoreWeb.UserController do
   use BlogCoreWeb, :controller
 
   alias BlogCore.Accounts
-  alias BlogCore.Accounts.User
 
   action_fallback BlogCoreWeb.FallbackController
 

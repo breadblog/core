@@ -10,6 +10,8 @@ defmodule BlogCore.Application do
     children = [
       # Start the Ecto repository
       BlogCore.Repo,
+      # Start PubSub
+      {Phoenix.PubSub, [name: BlogCore.PubSub, adapter: Phoenix.PubSub.PG2]},
       # Start the endpoint when the application starts
       BlogCoreWeb.Endpoint
       # Starts a worker by calling: BlogCore.Worker.start_link(arg)

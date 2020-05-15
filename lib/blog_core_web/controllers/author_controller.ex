@@ -7,8 +7,12 @@ defmodule BlogCoreWeb.AuthorController do
   action_fallback BlogCoreWeb.FallbackController
 
   def index(conn, _params) do
-    authors = Accounts.list_authors()
-    json(conn, authors)
+    authors =
+      Accounts.list_authors()
+      |> Enum.map(&Accounts.display(&1, conn.assigns.current_user))
+      |> Enum.into([])
+
+    json(conn, %{authors: authors})
   end
 
   def create(conn, %{"author" => author_params = %Author{}}) do

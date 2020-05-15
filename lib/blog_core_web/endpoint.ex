@@ -1,6 +1,8 @@
 defmodule BlogCoreWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :blog_core
 
+  socket "/live", Phoenix.LiveView.Socket
+
   socket "/socket", BlogCoreWeb.UserSocket,
     websocket: true,
     longpoll: false

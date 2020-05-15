@@ -222,4 +222,13 @@ defmodule BlogCore.Accounts do
       "user" => display(author.user, curr_user)
     }
   end
+
+  def display(%Author{} = author, nil) do
+    author = Repo.preload(author, :user)
+
+    %{
+      "id" => author.id,
+      "user" => display(author.user, nil)
+    }
+  end
 end

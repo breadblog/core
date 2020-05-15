@@ -20,7 +20,7 @@ defmodule BlogCore.MixProject do
   def application do
     [
       mod: {BlogCore.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -33,10 +33,11 @@ defmodule BlogCore.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:distillery, "~> 2.1"},
       {:joken, "~> 2.0"},
-      {:phoenix, "~> 1.4.11"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix, "~> 1.5.1"},
       {:phoenix_ecto, "~> 4.0"},
+      {:phoenix_live_dashboard, "~> 0.1"},
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
