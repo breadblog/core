@@ -1,4 +1,4 @@
-# Core
+# BlogCore
 
 To start your Phoenix server:
 

@@ -1,9 +1,9 @@
-defmodule Core.MixProject do
+defmodule BlogCore.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :core,
+      app: :blog_core,
       version: "0.1.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,8 +19,8 @@ defmodule Core.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Core.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      mod: {BlogCore.Application, []},
+      extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end
 
@@ -33,14 +33,18 @@ defmodule Core.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.11"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:distillery, "~> 2.1"},
+      {:joken, "~> 2.0"},
+      {:phoenix, "~> 1.5.1"},
       {:phoenix_ecto, "~> 4.0"},
+      {:phoenix_live_dashboard, "~> 0.1"},
       {:ecto_sql, "~> 3.1"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:argon2_elixir, "~> 2.0"},
+      {:elixir_uuid, "~> 1.2"}
     ]
   end
 

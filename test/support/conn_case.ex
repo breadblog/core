@@ -1,4 +1,4 @@
-defmodule CoreWeb.ConnCase do
+defmodule BlogCoreWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule CoreWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use CoreWeb.ConnCase, async: true`, although
+  by setting `use BlogCoreWeb.ConnCase, async: true`, although
   this option is not recommendded for other databases.
   """
 
@@ -20,19 +20,20 @@ defmodule CoreWeb.ConnCase do
   using do
     quote do
       # Import conveniences for testing with connections
-      use Phoenix.ConnTest
-      alias CoreWeb.Router.Helpers, as: Routes
+      import Plug.Conn
+      import Phoenix.ConnTest
+      alias BlogCoreWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint CoreWeb.Endpoint
+      @endpoint BlogCoreWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Core.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(BlogCore.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Core.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(BlogCore.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
