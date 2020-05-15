@@ -30,5 +30,6 @@ core-*.tar
 # Config
 config/dev.secret.exs
 config/test.secret.exs
+config/*.secret.exs
 
 .elixir_ls
