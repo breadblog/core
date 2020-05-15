@@ -11,7 +11,7 @@ defmodule BlogCoreWeb.LoginController do
         |> fetch_session
         |> put_session(:token, token)
         |> send_resp(200, "ok")
-      {:error, err} -> conn
+      {:error, _err} -> conn
         # TODO: handle 500's etc
         |> send_resp(401, "unauthorized")
     end

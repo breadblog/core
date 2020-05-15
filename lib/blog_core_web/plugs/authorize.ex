@@ -1,9 +1,5 @@
 defmodule BlogCoreWeb.Plugs.Authorize do
   import Plug.Conn
-  import Phoenix.Controller
-
-  alias BlogCore.Accounts
-  alias BlogCore.Token
 
   def init(opts), do: opts
 
