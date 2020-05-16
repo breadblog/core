@@ -2,19 +2,18 @@ defmodule BlogCoreWeb.UserView do
   use BlogCoreWeb, :view
   alias BlogCoreWeb.UserView
 
-  def render("index.json", %{users: users}) do
-    %{data: render_many(users, UserView, "user.json")}
+  def render("login.json", %{user: user}) do
   end
 
-  def render("show.json", %{user: user}) do
-    %{data: render_one(user, UserView, "user.json")}
+  def render("logout.json", _assigns) do
   end
 
-  def render("user.json", %{user: user}) do
-    %{id: user.id,
-      name: user.name,
-      username: user.username,
-      email: user.email,
-      bio: user.bio}
+  def render("index.json", %{users: users, curr_user: curr_user}) do
+  end
+
+  def render("show.json", %{user: user, curr_user: curr_user}) do
+  end
+
+  def render("user.json", %{user: user, curr_user: curr_user}) do
   end
 end

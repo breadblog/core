@@ -2,18 +2,15 @@ defmodule BlogCoreWeb.PostView do
   use BlogCoreWeb, :view
   alias BlogCoreWeb.PostView
 
-  def render("index.json", %{posts: posts}) do
-    %{data: render_many(posts, PostView, "post.json")}
+  def render("index.json", %{posts: posts, curr_user: curr_user}) do
+
   end
 
-  def render("show.json", %{post: post}) do
-    %{data: render_one(post, PostView, "post.json")}
+  def render("show.json", %{post: post, curr_user: curr_user}) do
+
   end
 
-  def render("post.json", %{post: post}) do
-    %{id: post.id,
-      title: post.title,
-      description: post.description,
-      body: post.body}
+  def render("post.json", %{post: post, curr_user: curr_user}) do
+
   end
 end

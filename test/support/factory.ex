@@ -13,7 +13,7 @@ defmodule BlogCore.Factory do
         build(:comment),
         build(:comment)
       ],
-      author: build(:author)
+      author: build(:user)
     }
   end
 
@@ -40,20 +40,8 @@ defmodule BlogCore.Factory do
     }
   end
 
-  def build(:author) do
-    %{
-      user: build(:user)
-    }
-  end
-
   def build(factory_name, overrides = %{}) do
     build(factory_name)
     |> Map.merge(overrides)
-  end
-
-  clean(attrs) do
-    attrs
-    |> Map.from_struct()
-    |> Map.drop([:id, ])
   end
 end

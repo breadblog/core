@@ -7,8 +7,6 @@ defmodule BlogCore.AccountsTest do
   describe "users" do
     alias BlogCore.Accounts.User
 
-    @invalid_attrs %{bio: nil, email: "invalidemail", name: "k", username: "bilbo$"}
-
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
         build(:user, attrs)
@@ -20,15 +18,16 @@ defmodule BlogCore.AccountsTest do
     test "create_user/1 with valid data creates a user" do
       expected = build(:user)
       assert {:ok, %User{} = actual} = Accounts.create_user(expected)
-      assert actual.bio == expected.bio
-      assert actual.email == expected.email
-      assert actual.name == expected.name
-      assert actual.username == expected.username
+      compare_users(expected, actual)
       assert actual.password != expected.password
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
+      attrs =
+        build(:user)
+        |> Map.put(:email, "bademail")
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(attrs)
     end
 
     test "get_user/1 returns {:ok, user} when there is a match for id" do
@@ -50,20 +49,38 @@ defmodule BlogCore.AccountsTest do
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
-      update_attrs = build(:user)
-      assert {:ok, %User{} = user} = Accounts.update_user(user, update_attrs)
-      assert user.bio == update_attrs.bio
-      assert user.email == update_attrs.email
-      assert user.name == update_attrs.name
-      assert user.username == update_attrs.username
-      assert user.password != update_attrs.password
+      original = user_fixture()
+
+      attrs =
+        build(:user)
+        |> Map.put(:email, "world@hello.com")
+        |> Map.put(:name, "Frodo")
+        |> Map.put(:bio, "Ring Bearer")
+        |> Map.put(:username, "frodo")
+        |> Map.put(:password, "aPa$$w0rd")
+
+      assert {:ok, %User{} = actual} = Accounts.update_user(original, attrs)
+      compare_users(attrs, actual)
+      assert original.password != actual.password
+      assert actual.password != attrs.password
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
+
+      attrs =
+        build(:user)
+        |> Map.put(:username, "k")
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, attrs)
       assert Accounts.get_user(user.id) == {:ok, user}
+    end
+
+    def compare_users(a, b) do
+      assert a.bio == b.bio
+      assert a.email == b.email
+      assert a.name == b.name
+      assert a.username == b.username
     end
   end
 
@@ -72,21 +89,23 @@ defmodule BlogCore.AccountsTest do
 
     def author_fixture(attrs \\ %{}) do
       {:ok, author} =
-        attrs
-        |> Enum.into(build(:author))
+        build(:author, attrs)
         |> Accounts.create_author()
 
       author
     end
 
     test "create_author/1 with valid data creates a author" do
-      expected = build(:author)
-      assert {:ok, %Author{} = actual} = Accounts.create_author(expected)
-      assert expected.user.username == actual.user.username
+      attrs = build(:author)
+      assert {:ok, %Author{} = actual} = Accounts.create_author(attrs)
+      compare_authors(attrs, actual)
+      assert actual.user.password != attrs.user.password
     end
 
     test "create_author/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_author(@invalid_attrs)
+      attrs = build(:author)
+              |> put_in([:user, :password], "weaaaaak")
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_author(attrs)
     end
 
     test "get_author/1 returns {:ok, author} when there is a match for id" do
@@ -101,7 +120,7 @@ defmodule BlogCore.AccountsTest do
     test "get_author_from_username/1 returns {:ok, author} when match exists" do
       author = author_fixture()
       _id = author.id
-      assert {:ok, %Author{id: _id}} = Accounts.get_author_from_username(author.user.username) 
+      assert {:ok, %Author{id: _id}} = Accounts.get_author_from_username(author.user.username)
     end
 
     test "get_author_from_username/1 returns {:error, :not_found} when match not found" do
@@ -109,37 +128,29 @@ defmodule BlogCore.AccountsTest do
     end
 
     test "update_author/2 with valid data updates the author" do
-      author = author_fixture()
-      attrs = update_attrs(author)
+      original = author_fixture()
+      attrs = build(:author)
+              |> Map.put(:user, Map.from_struct(original.user))
+              |> put_in([:user, :password], "Th3 Str0nge$t")
 
-      assert {:ok, %Author{} = author} = Accounts.update_author(author, attrs)
-      assert author.user.id == attrs.user.id
+      assert {:ok, %Author{} = actual} = Accounts.update_author(original, attrs)
+      compare_authors(attrs, actual)
+      assert attrs.user.password != original.user.password
+      assert attrs.user.password != actual.user.password
     end
 
     test "update_author/2 with invalid data returns error changeset" do
-      author = author_fixture()
-      attrs = invalid_attrs(author)
+      original = author_fixture()
+      attrs = build(:author)
+              |> Map.put(:user, Map.from_struct(original.user))
+              |> put_in([:user, :password], "weaaaaak")
 
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_author(author, attrs)
-      assert Accounts.get_author(author.id) == {:ok, author}
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_author(original, attrs)
+      assert Accounts.get_author(original.id) == {:ok, original}
     end
 
-    defp invalid_attrs(author) do
-      user = author
-      |> Map.get(:user)
-      |> Map.from_struct()
-      |> Map.merge(%{username: "x"})
-
-      %{user: user}
-    end
-
-    defp update_attrs(author) do
-      user = author
-      |> Map.get(:user)
-      |> Map.from_struct()
-      |> Map.merge(%{username: build(:user).username})
-
-      %{user: user}
+    def compare_authors(a, b) do
+      compare_users(a.user, b.user)
     end
   end
 end

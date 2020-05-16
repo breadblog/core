@@ -11,7 +11,7 @@ defmodule BlogCoreWeb.FallbackController do
     |> put_status(:bad_request)
     |> put_view(BlogCoreWeb.ChangesetView)
     |> json(%{"json" => changeset})
-    |> render("error.json", changeset: changeset)
+    |> render("400.json", changeset: changeset)
   end
 
   def call(conn, {:error, :unauthorized}) do

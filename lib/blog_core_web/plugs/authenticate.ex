@@ -7,8 +7,8 @@ defmodule BlogCoreWeb.Plugs.Authorize do
     current_user = conn.assigns[:current_user]
     case current_user do
       nil -> conn
-      |> send_resp(401, "unauthorized")
-      |> halt
+      |> put_status(:unauthorized)
+      |> render("401.json")
       _ -> conn
     end
   end

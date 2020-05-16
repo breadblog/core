@@ -1,6 +1,6 @@
 defmodule BlogCoreWeb.Router do
-  use BlogCoreWeb, :router
   import Phoenix.LiveDashboard.Router
+  use BlogCoreWeb, :router
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -19,24 +19,32 @@ defmodule BlogCoreWeb.Router do
   scope "/api", BlogCoreWeb do
     pipe_through [:api]
 
-    post "/login", LoginController, :login
-    post "/logout", LoginController, :logout
-    resources "/author", AuthorController, only: [:show, :index]
+    post "user/login", UserController, :login
+    post "user/logout", UserController, :logout
+    resources "/user", UserController, only: [:show, :index]
   end
 
   # private
   scope "/api", BlogCoreWeb do
     pipe_through [:api, BlogCoreWeb.Plugs.Authorize]
 
-    resources "/user", UserController, only: [:update]
-    resources "/author", AuthorController, only: [:create, :update]
-    resources "/user", UserController, only: [:update]
+    resources "/user", UserController, only: [:create, :update]
   end
 
+  # dashboard
   if Mix.env() == :dev do
     scope "/" do
       pipe_through :browser
       live_dashboard "/dashboard"
     end
   end
+
+  # TODO: do I need this?
+  # scope "/", BlogCoreWeb do
+  #   get "/*path", NotFoundController, :index
+  #   put "/*path", NotFoundController, :index
+  #   post "/*path", NotFoundController, :index
+  #   patch "/*path", NotFoundController, :index
+  #   delete "/*path", NotFoundController, :index
+  # end
 end
