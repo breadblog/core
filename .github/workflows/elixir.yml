@@ -8,6 +8,8 @@ on:
 
 jobs:
   test:
+    env:
+      MIX_ENV: ci
     services:
       db:
         env:
