@@ -8,7 +8,8 @@
 use Mix.Config
 
 config :core,
-  ecto_repos: [Core.Repo]
+  ecto_repos: [Core.Repo],
+  generators: [binary: true]
 
 # Configures the endpoint
 config :core, CoreWeb.Endpoint,
