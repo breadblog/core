@@ -21,4 +21,8 @@ config :core, CoreWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-import_config "test.secret.exs"
+try do
+  import_config "test.secret.exs"
+catch
+  _ -> IO.puts "proceeding without test.secret.exs"
+end

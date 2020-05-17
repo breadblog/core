@@ -7,12 +7,31 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  test:
+    services:
+      db:
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        image: postgres:12
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
+    - name: Recover dependency cache
+      uses: actions/cache@v1
+      id: deps_cache
+      with:
+        path: deps
+        key: ${{ runner.OS }}-deps-${{ hashFiles('**/mix.lock') }}
+        restore-keys: |
+          ${{ runner.OS }}-deps-${{ env.cache-name }}-
+          ${{ runner.OS }}-deps-
+          ${{ runner.OS }}-
     - name: Setup elixir
       uses: actions/setup-elixir@v1
       with:
