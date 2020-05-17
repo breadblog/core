@@ -10,6 +10,7 @@ defmodule CoreWeb.Router do
 
     resources "/users", UserController, except: [:new, :edit]
     resources "/tags", TagController, except: [:new, :edit]
+    resources "/posts", PostController, except: [:new, :edit]
   end
 
   # Enables LiveDashboard only for development
