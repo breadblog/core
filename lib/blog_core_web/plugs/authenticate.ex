@@ -7,8 +7,7 @@ defmodule BlogCoreWeb.Plugs.Authorize do
     current_user = conn.assigns[:current_user]
     case current_user do
       nil -> conn
-      |> put_status(:unauthorized)
-      |> render("401.json")
+      |> Phoenix.Controller.render(BlogCoreWeb.ErrorView, "401.json")
       _ -> conn
     end
   end

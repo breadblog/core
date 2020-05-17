@@ -9,10 +9,6 @@ defmodule BlogCore.Factory do
         build(:tag, %{name: "first"}),
         build(:tag, %{name: "second"})
       ],
-      comments: [
-        build(:comment),
-        build(:comment)
-      ],
       author: build(:user)
     }
   end
@@ -21,12 +17,6 @@ defmodule BlogCore.Factory do
     %{
       name: "tagname",
       description: "description of a tag"
-    }
-  end
-
-  def build(:comment) do
-    %{
-      value: "a valid comment"
     }
   end
 
