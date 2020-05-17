@@ -1,10 +1,10 @@
 use Mix.Config
 
 # Configure your database
-config :blog_core, BlogCore.Repo,
+config :core, Core.Repo,
   username: "postgres",
   password: "postgres",
-  database: "blog_core_dev",
+  database: "core_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -15,7 +15,7 @@ config :blog_core, BlogCore.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :blog_core, BlogCoreWeb.Endpoint,
+config :core, CoreWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -56,5 +56,4 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-# Override
 import_config "dev.secret.exs"
