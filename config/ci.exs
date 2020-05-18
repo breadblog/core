@@ -1,39 +1,22 @@
 use Mix.Config
 
-database_host = System.get_env("POSTGRES_HOST") ||
-  raise """
-  missing POSTGRES_HOST
-  """
-
-database_user = System.get_env("POSTGRES_USER") ||
-  raise """
-  missing POSTGRES_USER
-  """
-
-database_password = System.get_env("POSTGRES_PASSWORD") ||
-  raise """
-  missing POSTGRES_PASSWORD
-  """
-
-database_port = System.get_env("POSTGRES_PORT") ||
-  raise """
-  missing POSTGRES_PORT
-  """
-
-database_name = "core_test#{System.get_env("MIX_TEST_PARTITION")}"
-
-IO.puts "connecting to #{database_host}://#{database_user}:#{database_password}:#{database_port}/#{database_name}"
-
+# Configure your database
+#
+# The MIX_TEST_PARTITION environment variable can be used
+# to provide built-in test partitioning in CI environment.
+# Run `mix help test` for more information.
 config :core, Core.Repo,
-  hostname: "localhost",
-  user: "postgres",
+  username: "postgres",
   password: "postgres",
-  database: "postgres",
-  port: 5432,
+  database: "core_test#{System.get_env("MIX_TEST_PARTITION")}",
+  hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
+# We don't run a server during test. If one is required,
+# you can enable the server option below.
 config :core, CoreWeb.Endpoint,
   http: [port: 4002],
   server: false
 
+# Print only warnings and errors during test
 config :logger, level: :warn
