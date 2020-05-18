@@ -37,6 +37,7 @@ defmodule Core.AccountsTest do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
       assert user.name == "some name"
       assert user.password != "some password"
+      assert user.password != nil
       assert user.username == "some username"
     end
 
@@ -49,6 +50,7 @@ defmodule Core.AccountsTest do
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
       assert user.name == "some updated name"
       assert user.password != "some updated password"
+      assert user.password != nil
       assert user.password != "some password"
       assert user.username == "some updated username"
     end

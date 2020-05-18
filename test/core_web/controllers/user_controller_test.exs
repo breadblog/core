@@ -67,8 +67,7 @@ defmodule CoreWeb.UserControllerTest do
       assert res["id"] == id
       assert res["name"] == "some updated name"
       assert res["username"] == "some updated username"
-      assert res["password"] != "some updated password"
-      assert res["password"] != "some password"
+      assert res["password"] == nil
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
