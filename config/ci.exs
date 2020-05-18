@@ -25,11 +25,11 @@ database_name = "core_test#{System.get_env("MIX_TEST_PARTITION")}"
 IO.puts "connecting to #{database_host}://#{database_user}:#{database_password}:#{database_port}/#{database_name}"
 
 config :core, Core.Repo,
-  hostname: database_host,
-  user: database_user,
-  password: database_password,
-  database: database_name,
-  port: database_port,
+  hostname: "localhost",
+  user: "postgres",
+  password: "postgres",
+  database: "postgres",
+  port: 5432,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :core, CoreWeb.Endpoint,
