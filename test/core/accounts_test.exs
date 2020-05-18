@@ -6,13 +6,13 @@ defmodule Core.AccountsTest do
   describe "users" do
     alias Core.Accounts.User
 
-    @valid_attrs %{name: "some name", password: "some password", username: "some username"}
+    @valid_attrs %{name: "some name", password: "some password A1!", username: "someusername"}
     @update_attrs %{
       name: "some updated name",
-      password: "some updated password",
-      username: "some updated username"
+      password: "some updated password A1!",
+      username: "updatedusername"
     }
-    @invalid_attrs %{name: nil, password: nil, username: nil}
+    @invalid_attrs %{name: nil, password: "badpassword", username: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -35,10 +35,10 @@ defmodule Core.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.name == "some name"
-      assert user.password != "some password"
+      assert user.name == @valid_attrs.name
+      assert user.password != @valid_attrs.password
       assert user.password != nil
-      assert user.username == "some username"
+      assert user.username == @valid_attrs.username
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -48,11 +48,11 @@ defmodule Core.AccountsTest do
     test "update_user/2 with valid data updates the user" do
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-      assert user.name == "some updated name"
-      assert user.password != "some updated password"
+      assert user.name == @update_attrs.name
+      assert user.password != @valid_attrs.password
+      assert user.password != @update_attrs.password
       assert user.password != nil
-      assert user.password != "some password"
-      assert user.username == "some updated username"
+      assert user.username == @update_attrs.username
     end
 
     test "update_user/2 with invalid data returns error changeset" do
