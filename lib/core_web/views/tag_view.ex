@@ -11,8 +11,6 @@ defmodule CoreWeb.TagView do
   end
 
   def render("tag.json", %{tag: tag}) do
-    %{id: tag.id,
-      name: tag.name,
-      description: tag.description}
+    %{id: tag.id, name: tag.name, description: tag.description}
   end
 end

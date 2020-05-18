@@ -1,18 +1,9 @@
-# Core
+![Elixir CI](https://github.com/BreadBlog/core/workflows/Elixir%20CI/badge.svg)
 
-To start your Phoenix server:
+# Blog Core
 
-  * Setup the project with `mix setup`
-  * Start Phoenix endpoint with `mix phx.server`
+This is the API for my personal blogging platform. It was created using Phoenix Framework, a powerful web framework for Elixir.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+# Privacy
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+TODO: link to blog post
