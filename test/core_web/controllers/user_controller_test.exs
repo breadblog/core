@@ -39,12 +39,12 @@ defmodule CoreWeb.UserControllerTest do
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
-      assert %{
-               "id" => id,
-               "name" => "some name",
-               "password" => "some password",
-               "username" => "some username"
-             } = json_response(conn, 200)["data"]
+      res = json_response(conn, 200)["data"]
+
+      assert res["id"] == id
+      assert res["name"] == "some name"
+      assert res["username"] == "some username"
+      assert res["password"] != "some password"
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -62,12 +62,13 @@ defmodule CoreWeb.UserControllerTest do
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
-      assert %{
-               "id" => id,
-               "name" => "some updated name",
-               "password" => "some updated password",
-               "username" => "some updated username"
-             } = json_response(conn, 200)["data"]
+      res = json_response(conn, 200)["data"]
+
+      assert res["id"] == id
+      assert res["name"] == "some updated name"
+      assert res["username"] == "some updated username"
+      assert res["password"] != "some updated password"
+      assert res["password"] != "some password"
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do

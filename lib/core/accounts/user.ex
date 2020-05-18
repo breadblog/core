@@ -15,5 +15,6 @@ defmodule Core.Accounts.User do
     user
     |> cast(attrs, [:username, :name, :password])
     |> validate_required([:username, :name, :password])
+    |> update_change(:password, &Argon2.hash_pwd_salt/1)
   end
 end
