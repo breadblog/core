@@ -15,11 +15,15 @@ database_password = System.get_env("POSTGRES_PASSWORD") ||
   missing POSTGRES_PASSWORD
   """
 
+database_name = "core_test#{System.get_env("MIX_TEST_PARTITION")}"
+
+IO.puts "connecting to #{database_host}://#{database_user}:#{database_password}:5432/#{database_name}"
+
 config :core, Core.Repo,
   hostname: database_host,
   user: database_user,
   password: database_password,
-  database: "core_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: database_name,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :core, CoreWeb.Endpoint,
