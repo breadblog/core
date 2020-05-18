@@ -6,8 +6,8 @@ defmodule Core.ContentsTest do
   describe "tags" do
     alias Core.Contents.Tag
 
-    @valid_attrs %{description: "some description", name: "some name"}
-    @update_attrs %{description: "some updated description", name: "some updated name"}
+    @valid_attrs %{description: "some description", name: "tagname"}
+    @update_attrs %{description: "some updated description", name: "updatename"}
     @invalid_attrs %{description: nil, name: nil}
 
     def tag_fixture(attrs \\ %{}) do
@@ -31,8 +31,8 @@ defmodule Core.ContentsTest do
 
     test "create_tag/1 with valid data creates a tag" do
       assert {:ok, %Tag{} = tag} = Contents.create_tag(@valid_attrs)
-      assert tag.description == "some description"
-      assert tag.name == "some name"
+      assert tag.description == @valid_attrs.description
+      assert tag.name == @valid_attrs.name
     end
 
     test "create_tag/1 with invalid data returns error changeset" do
@@ -42,8 +42,8 @@ defmodule Core.ContentsTest do
     test "update_tag/2 with valid data updates the tag" do
       tag = tag_fixture()
       assert {:ok, %Tag{} = tag} = Contents.update_tag(tag, @update_attrs)
-      assert tag.description == "some updated description"
-      assert tag.name == "some updated name"
+      assert tag.description == @update_attrs.description
+      assert tag.name == @update_attrs.name
     end
 
     test "update_tag/2 with invalid data returns error changeset" do
