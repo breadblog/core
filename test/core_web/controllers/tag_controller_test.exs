@@ -6,11 +6,11 @@ defmodule CoreWeb.TagControllerTest do
 
   @create_attrs %{
     description: "some description",
-    name: "some name"
+    name: "somename"
   }
   @update_attrs %{
     description: "some updated description",
-    name: "some updated name"
+    name: "updatename"
   }
   @invalid_attrs %{description: nil, name: nil}
 
@@ -40,7 +40,7 @@ defmodule CoreWeb.TagControllerTest do
       assert %{
                "id" => id,
                "description" => "some description",
-               "name" => "some name"
+               "name" => "somename"
              } = json_response(conn, 200)["data"]
     end
 
@@ -62,7 +62,7 @@ defmodule CoreWeb.TagControllerTest do
       assert %{
                "id" => id,
                "description" => "some updated description",
-               "name" => "some updated name"
+               "name" => "updatename"
              } = json_response(conn, 200)["data"]
     end
 
