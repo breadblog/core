@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: ci
-      POSTGRES_HOST: postgres
+      POSTGRES_HOST: localhost
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
     services:
       postgres:
         # Docker Hub image
@@ -27,6 +28,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
     steps:
     - uses: actions/checkout@v2
     - name: Recover dependency cache
