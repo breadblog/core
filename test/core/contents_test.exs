@@ -68,7 +68,11 @@ defmodule Core.ContentsTest do
     alias Core.Contents.Post
 
     @valid_attrs %{body: "some body", description: "some description", title: "some title"}
-    @update_attrs %{body: "some updated body", description: "some updated description", title: "some updated title"}
+    @update_attrs %{
+      body: "some updated body",
+      description: "some updated description",
+      title: "some updated title"
+    }
     @invalid_attrs %{body: nil, description: nil, title: nil}
 
     def post_fixture(attrs \\ %{}) do
