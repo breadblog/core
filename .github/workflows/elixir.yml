@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MIX_ENV: ci
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     services:
       postgres:
         # Docker Hub image
