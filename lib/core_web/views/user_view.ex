@@ -11,6 +11,6 @@ defmodule CoreWeb.UserView do
   end
 
   def render("user.json", %{user: user}) do
-    %{id: user.id, username: user.username, name: user.name, password: user.password}
+    %{id: user.id, username: user.username, name: user.name}
   end
 end
