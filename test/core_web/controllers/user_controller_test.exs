@@ -6,15 +6,15 @@ defmodule CoreWeb.UserControllerTest do
 
   @create_attrs %{
     name: "some name",
-    password: "some password",
-    username: "some username"
+    password: "some password A1!",
+    username: "someusername"
   }
   @update_attrs %{
     name: "some updated name",
-    password: "some updated password",
-    username: "some updated username"
+    password: "some updated password A1!",
+    username: "updatedusername"
   }
-  @invalid_attrs %{name: nil, password: nil, username: nil}
+  @invalid_attrs %{name: nil, password: "badpassword", username: nil}
 
   def fixture(:user) do
     {:ok, user} = Accounts.create_user(@create_attrs)
@@ -42,9 +42,9 @@ defmodule CoreWeb.UserControllerTest do
       res = json_response(conn, 200)["data"]
 
       assert res["id"] == id
-      assert res["name"] == "some name"
-      assert res["username"] == "some username"
-      assert res["password"] != "some password"
+      assert res["name"] == @create_attrs.name
+      assert res["username"] == @create_attrs.username
+      assert res["password"] == nil
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -65,8 +65,8 @@ defmodule CoreWeb.UserControllerTest do
       res = json_response(conn, 200)["data"]
 
       assert res["id"] == id
-      assert res["name"] == "some updated name"
-      assert res["username"] == "some updated username"
+      assert res["name"] == @update_attrs.name
+      assert res["username"] == @update_attrs.username
       assert res["password"] == nil
     end
 
