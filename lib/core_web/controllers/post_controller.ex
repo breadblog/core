@@ -6,6 +6,8 @@ defmodule CoreWeb.PostController do
 
   action_fallback CoreWeb.FallbackController
 
+  plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
+
   def index(conn, _params) do
     posts = Contents.list_posts()
     render(conn, "index.json", posts: posts)

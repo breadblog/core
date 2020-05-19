@@ -32,4 +32,4 @@ core-*.tar
 /config/test.secret.exs
 
 # language server
-/.elixir-ls/
+/.elixir_ls/

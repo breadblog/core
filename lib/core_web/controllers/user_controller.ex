@@ -6,6 +6,8 @@ defmodule CoreWeb.UserController do
 
   action_fallback CoreWeb.FallbackController
 
+  plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, "index.json", users: users)

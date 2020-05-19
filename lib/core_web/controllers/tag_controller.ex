@@ -6,6 +6,8 @@ defmodule CoreWeb.TagController do
 
   action_fallback CoreWeb.FallbackController
 
+  plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
+
   def index(conn, _params) do
     tags = Contents.list_tags()
     render(conn, "index.json", tags: tags)
