@@ -1,10 +1,12 @@
 defmodule CoreWeb.Plugs.Authenticate do
+  alias Core.Errors
+
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    current_user = conn.assigns[:current_user]
-    case current_user do
-      nil -> raise Core.Unauthenticated
+    curr_user = conn.assigns[:curr_user]
+    case curr_user do
+      nil -> raise Errors.Unauthenticated
       _ -> conn
     end
   end

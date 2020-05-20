@@ -8,6 +8,17 @@ defmodule CoreWeb.UserController do
 
   plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
 
+  def login(conn, %{"username" => username, "password" => password}) do
+    case Accounts.login(username, password) do
+      {:ok, token} -> conn
+        |> fetch_session
+        |> put_session(:token, token)
+        |> render("200.json")
+      {:error, _err} -> conn
+        |> render("401.json")
+    end
+  end
+
   def index(conn, _params) do
     users = Accounts.list_users()
     render(conn, "index.json", users: users)

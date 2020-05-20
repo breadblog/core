@@ -1,3 +1,8 @@
-defmodule Core.Unauthenticated do
-  defexception [message: "unauthorized", plug_status: 401]
+defmodule Core.Errors.Unauthenticated do
+  defexception [message: "unauthorized"]
+
+  defimpl Plug.Exception, for: Core.Errors.Unauthenticated do
+    def actions(_), do: []
+    def status(_), do: 401
+  end
 end

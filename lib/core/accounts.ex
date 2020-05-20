@@ -5,8 +5,26 @@ defmodule Core.Accounts do
 
   import Ecto.Query, warn: false
   alias Core.Repo
+  alias Core.Errors
 
   alias Core.Accounts.User
+
+  @doc """
+  Check credentials and return a token if valid
+  """
+  def login(username, password) do
+    with user = %User{} <-
+           Repo.one(
+             from User,
+               where: [username: ^username]
+           ),
+         :ok <-
+           check_pass(user, password) do
+      generate_token(user)
+    else
+      _ -> raise Errors.Unauthenticated
+    end
+  end
 
   @doc """
   Returns the list of users.
@@ -100,5 +118,19 @@ defmodule Core.Accounts do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  defp generate_token(user) do
+    case Core.Token.generate_and_sign(%{"user_id" => user.id}) do
+      {:ok, token, _} -> {:ok, token}
+      {:error, _} = result -> result
+    end
+  end
+
+  defp check_pass(user, password) do
+    case Argon2.check_pass(user, password, hash_key: :password) do
+      {:ok, _} -> :ok
+      {:error, _} -> {:error, "username or password is incorrect"}
+    end
   end
 end

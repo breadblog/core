@@ -31,6 +31,7 @@ defmodule CoreWeb.TagControllerTest do
   end
 
   describe "create tag" do
+    @tag :authenticated
     test "renders tag when data is valid", %{conn: conn} do
       conn = post(conn, Routes.tag_path(conn, :create), tag: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -44,6 +45,7 @@ defmodule CoreWeb.TagControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
+    @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.tag_path(conn, :create), tag: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
@@ -53,6 +55,7 @@ defmodule CoreWeb.TagControllerTest do
   describe "update tag" do
     setup [:create_tag]
 
+    @tag :authenticated
     test "renders tag when data is valid", %{conn: conn, tag: %Tag{id: id} = tag} do
       conn = put(conn, Routes.tag_path(conn, :update, tag), tag: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
@@ -66,6 +69,7 @@ defmodule CoreWeb.TagControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
+    @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn, tag: tag} do
       conn = put(conn, Routes.tag_path(conn, :update, tag), tag: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
@@ -75,6 +79,7 @@ defmodule CoreWeb.TagControllerTest do
   describe "delete tag" do
     setup [:create_tag]
 
+    @tag :authenticated
     test "deletes chosen tag", %{conn: conn, tag: tag} do
       conn = delete(conn, Routes.tag_path(conn, :delete, tag))
       assert response(conn, 204)

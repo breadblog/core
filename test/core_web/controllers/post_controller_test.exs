@@ -33,6 +33,7 @@ defmodule CoreWeb.PostControllerTest do
   end
 
   describe "create post" do
+    @tag :authenticated
     test "renders post when data is valid", %{conn: conn} do
       conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -47,15 +48,27 @@ defmodule CoreWeb.PostControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
+    @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.post_path(conn, :create), post: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
+    end
+
+    test "requires authentication", %{conn: conn} do
+      conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
+      assert %{"id" => id} = json_response(conn, 201)["data"]
+
+      conn = get(conn, Routes.post_path(conn, :show, id))
+
+      # TODO: why isn't the exception being converted into a JSON view?
+      assert json_response(conn, 401) == "unauthorized"
     end
   end
 
   describe "update post" do
     setup [:create_post]
 
+    @tag :authenticated
     test "renders post when data is valid", %{conn: conn, post: %Post{id: id} = post} do
       conn = put(conn, Routes.post_path(conn, :update, post), post: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
@@ -70,6 +83,7 @@ defmodule CoreWeb.PostControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
+    @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn, post: post} do
       conn = put(conn, Routes.post_path(conn, :update, post), post: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
@@ -79,6 +93,7 @@ defmodule CoreWeb.PostControllerTest do
   describe "delete post" do
     setup [:create_post]
 
+    @tag :authenticated
     test "deletes chosen post", %{conn: conn, post: post} do
       conn = delete(conn, Routes.post_path(conn, :delete, post))
       assert response(conn, 204)
