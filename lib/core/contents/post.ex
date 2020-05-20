@@ -21,5 +21,7 @@ defmodule Core.Contents.Post do
     |> cast_assoc(:tags)
     |> cast_assoc(:author)
     |> validate_required([:title, :description, :body])
+    |> validate_length(:title, min: 3, max: 100)
+    |> validate_length(:body, min: 0, max: 10000)
   end
 end
