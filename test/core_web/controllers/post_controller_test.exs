@@ -30,6 +30,11 @@ defmodule CoreWeb.PostControllerTest do
       conn = get(conn, Routes.post_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end
+
+    test "does not list unpublished posts", %{conn: conn} do
+      conn = get(conn, Routes.post_path(conn, :index))
+      assert json_response(conn, 200)["data"]
+    end
   end
 
   describe "create post" do

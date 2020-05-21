@@ -25,7 +25,10 @@ defmodule Core.AccountsTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Enum.member?(Accounts.list_users(), user)
+      users = Accounts.list_users()
+      assert Enum.member?(users, user)
+      assert Enum.all?(users, &(&1 = %User{}))
+      assert length(users) == 3
     end
 
     test "get_user/1 returns the user with given id" do

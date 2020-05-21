@@ -28,9 +28,15 @@ defmodule CoreWeb.UserControllerTest do
   describe "index" do
     test "lists all users", %{conn: conn} do
       conn = get(conn, Routes.user_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
+      users = json_response(conn, 200)["data"]
+      assert is_list(users)
+      assert %{} = Enum.find(users, nil, fn x -> x["username"] == "frodo" end)
+      assert %{} = Enum.find(users, nil, fn x -> x["username"] == "otherperson" end)
     end
   end
+
+  # TODO: fix
+  # TODO: test authenticated routes require auth
 
   describe "create user" do
     @tag :authenticated

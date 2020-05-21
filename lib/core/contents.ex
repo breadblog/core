@@ -63,7 +63,7 @@ defmodule Core.Contents do
   def create_tag!(attrs \\ %{}) do
     %Tag{}
     |> Tag.changeset(attrs)
-    |> Repo.insert!
+    |> Repo.insert!()
   end
 
   @doc """

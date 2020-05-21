@@ -70,7 +70,12 @@ defmodule Core.ContentsTest do
   describe "posts" do
     alias Core.Contents.Post
 
-    @valid_attrs %{body: "some body", description: "some description", title: "some title", published: true}
+    @valid_attrs %{
+      body: "some body",
+      description: "some description",
+      title: "some title",
+      published: true
+    }
     @update_attrs %{
       body: "some updated body",
       description: "some updated description",
@@ -92,7 +97,7 @@ defmodule Core.ContentsTest do
       post = post_fixture()
       posts = Contents.list_posts()
       assert Enum.all?(posts, &(&1 = %Post{}))
-      assert length(posts) == 2
+      assert length(posts) == 3
       assert Enum.member?(posts, post)
     end
 

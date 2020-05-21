@@ -50,13 +50,6 @@ defmodule CoreWeb.ConnCase do
       username = "frodo"
       password = "St1ngs?!"
 
-      {:ok, _user} =
-        Core.Accounts.create_user(%{
-          name: "Frodo Baggins",
-          username: username,
-          password: password
-        })
-
       {:ok, token} = Core.Accounts.login(username, password)
 
       conn =
