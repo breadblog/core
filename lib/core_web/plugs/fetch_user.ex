@@ -16,17 +16,17 @@ defmodule CoreWeb.Plugs.FetchUser do
         token
         |> Core.Token.verify_and_validate!()
         |> Map.get("user_id")
-        |> Accounts.get_user!()
+        |> Accounts.get_user()
       end
 
     case user do
-      nil ->
-        conn
-        |> assign(:curr_user, nil)
-
-      user ->
+      {:ok, user} ->
         conn
         |> assign(:curr_user, user)
+
+      _ ->
+        conn
+        |> assign(:curr_user, nil)
     end
   end
 end

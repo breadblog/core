@@ -17,6 +17,13 @@ defmodule CoreWeb.FallbackController do
     conn
     |> put_status(:not_found)
     |> put_view(CoreWeb.ErrorView)
-    |> render(:"404")
+    |> render("404.json")
+  end
+
+  def call(conn, {:error, :unauthorized}) do
+    conn
+    |> put_status(:unauthorized)
+    |> put_view(CoreWeb.ErrorView)
+    |> render("401.json")
   end
 end

@@ -5,7 +5,6 @@ defmodule Core.Accounts do
 
   import Ecto.Query, warn: false
   alias Core.Repo
-  alias Core.Errors
 
   alias Core.Accounts.User
 
@@ -17,12 +16,13 @@ defmodule Core.Accounts do
            Repo.one(
              from User,
                where: [username: ^username]
-           ),
+           ) || {:error, :unauthorized},
          :ok <-
-           check_pass(user, password) do
-      generate_token(user)
+           check_pass(user, password),
+         {:ok, token} <- generate_token(user) do
+      {:ok, token, user}
     else
-      _ -> raise Errors.Unauthenticated
+      err -> err
     end
   end
 
@@ -46,14 +46,19 @@ defmodule Core.Accounts do
 
   ## Examples
 
-      iex> get_user!(123)
-      %User{}
+      iex> get_user(123)
+      {:ok, %User{}}
 
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_user(456)
+      {:error, :not_found}
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id) do
+    case Repo.get(User, id) do
+      %User{} = user -> {:ok, user}
+      _ -> {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a user.
@@ -71,6 +76,12 @@ defmodule Core.Accounts do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_user!(attrs \\ %{}) do
+    %User{}
+    |> User.changeset(attrs)
+    |> Repo.insert!()
   end
 
   @doc """
@@ -123,14 +134,15 @@ defmodule Core.Accounts do
   defp generate_token(user) do
     case Core.Token.generate_and_sign(%{"user_id" => user.id}) do
       {:ok, token, _} -> {:ok, token}
-      {:error, _} = result -> result
+      # this should never fail, should be logged if it does
+      err -> raise err
     end
   end
 
   defp check_pass(user, password) do
     case Argon2.check_pass(user, password, hash_key: :password) do
       {:ok, _} -> :ok
-      {:error, _} -> {:error, "username or password is incorrect"}
+      {:error, _} -> {:error, :unauthorized}
     end
   end
 end

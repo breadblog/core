@@ -17,4 +17,4 @@ tags = [
   %{name: "privacy", description: "Your ability to control who knows your private information"},
 ]
 
-Enum.each(tags, &Core.Contents.create_tag/1)
+Enum.each(tags, &Core.Contents.create_tag!/1)

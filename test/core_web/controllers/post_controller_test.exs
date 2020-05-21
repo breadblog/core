@@ -26,7 +26,7 @@ defmodule CoreWeb.PostControllerTest do
   end
 
   describe "index" do
-    test "lists all posts", %{conn: conn} do
+    test "lists all published posts", %{conn: conn} do
       conn = get(conn, Routes.post_path(conn, :index))
       assert json_response(conn, 200)["data"] == []
     end

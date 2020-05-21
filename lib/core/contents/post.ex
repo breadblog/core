@@ -8,6 +8,7 @@ defmodule Core.Contents.Post do
     field :body, :string
     field :description, :string
     field :title, :string
+    field :published, :boolean
     belongs_to :author, User
     many_to_many :tags, Tag, join_through: "post_tags"
 
@@ -17,10 +18,10 @@ defmodule Core.Contents.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :description, :body])
+    |> cast(attrs, [:title, :description, :body, :published])
     |> cast_assoc(:tags)
     |> cast_assoc(:author)
-    |> validate_required([:title, :description, :body])
+    |> validate_required([:title, :description, :body, :published])
     |> validate_length(:title, min: 3, max: 100)
     |> validate_length(:body, min: 0, max: 10000)
   end

@@ -9,14 +9,19 @@ defmodule CoreWeb.UserController do
   plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
 
   def login(conn, %{"username" => username, "password" => password}) do
-    case Accounts.login(username, password) do
-      {:ok, token} -> conn
-        |> fetch_session
-        |> put_session(:token, token)
-        |> render("200.json")
-      {:error, _err} -> conn
-        |> render("401.json")
+    with {:ok, token, user} <- Accounts.login(username, password) do
+      conn
+      |> fetch_session
+      |> put_session(:token, token)
+      |> render("show.json", user: user)
     end
+  end
+
+  def logout(conn, _params) do
+    conn
+    |> fetch_session
+    |> delete_session(:token)
+    |> send_resp(:no_content, "")
   end
 
   def index(conn, _params) do
@@ -34,23 +39,21 @@ defmodule CoreWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, "show.json", user: user)
+    with {:ok, user} <- Accounts.get_user(id) do
+      conn
+      |> render("show.json", user: user)
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
-    end
+    with {:ok, user} <- Accounts.get_user(id),
+         {:ok, user} <- Accounts.update_user(user, user_params),
+         do: render(conn, "show.json", user: user)
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
-      send_resp(conn, :no_content, "")
-    end
+    with {:ok, user} <- Accounts.get_user(id),
+         {:ok, %User{}} <- Accounts.delete_user(user),
+         do: send_resp(conn, :no_content, "")
   end
 end
