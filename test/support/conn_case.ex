@@ -50,7 +50,7 @@ defmodule CoreWeb.ConnCase do
       username = "frodo"
       password = "St1ngs?!"
 
-      {:ok, token} = Core.Accounts.login(username, password)
+      {:ok, token, _} = Core.Accounts.login(username, password)
 
       conn =
         Phoenix.ConnTest.build_conn()

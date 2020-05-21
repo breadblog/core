@@ -94,9 +94,8 @@ defmodule CoreWeb.UserControllerTest do
       conn = delete(conn, Routes.user_path(conn, :delete, user))
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.user_path(conn, :show, user))
-      end
+      conn = get(conn, Routes.user_path(conn, :show, user))
+      assert json_response(conn, 404) == %{"errors" => %{"detail" => "Not Found"}}
     end
   end
 

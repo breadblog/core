@@ -7,7 +7,7 @@ defmodule CoreWeb.Plugs.Authenticate do
     case curr_user do
       nil ->
         conn
-        |> Phoenix.Controller.render("401.json")
+        |> Phoenix.Controller.render(CoreWeb.ErrorView, "401.json")
 
       _ ->
         conn
