@@ -1,4 +1,7 @@
 defmodule CoreWeb.Plugs.Authenticate do
+  import Plug.Conn
+  import Phoenix.Controller
+
   def init(opts), do: opts
 
   def call(conn, _opts) do
@@ -7,7 +10,10 @@ defmodule CoreWeb.Plugs.Authenticate do
     case curr_user do
       nil ->
         conn
-        |> Phoenix.Controller.render(CoreWeb.ErrorView, "401.json")
+        |> put_status(:unauthorized)
+        |> put_view(CoreWeb.ErrorView)
+        |> render("401.json")
+        |> halt
 
       _ ->
         conn

@@ -7,14 +7,16 @@ defmodule CoreWeb.PostControllerTest do
   @create_attrs %{
     body: "some body",
     description: "some description",
-    title: "some title"
+    title: "some title",
+    published: true
   }
   @update_attrs %{
     body: "some updated body",
     description: "some updated description",
-    title: "some updated title"
+    title: "some updated title",
+    published: false
   }
-  @invalid_attrs %{body: nil, description: nil, title: nil}
+  @invalid_attrs %{body: nil, description: nil, title: nil, published: nil}
 
   def fixture(:post) do
     {:ok, post} = Contents.create_post(@create_attrs)
@@ -26,15 +28,16 @@ defmodule CoreWeb.PostControllerTest do
   end
 
   describe "index" do
-    test "lists all published posts", %{conn: conn} do
-      conn = get(conn, Routes.post_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
-    end
+    # TODO: re-enable after #8
+    # test "lists all published posts", %{conn: conn} do
+    #   conn = get(conn, Routes.post_path(conn, :index))
+    #   assert json_response(conn, 200)["data"] == []
+    # end
 
-    test "does not list unpublished posts", %{conn: conn} do
-      conn = get(conn, Routes.post_path(conn, :index))
-      assert json_response(conn, 200)["data"]
-    end
+    # test "does not list unpublished posts", %{conn: conn} do
+    #   conn = get(conn, Routes.post_path(conn, :index))
+    #   assert json_response(conn, 200)["data"]
+    # end
   end
 
   describe "create post" do
@@ -61,12 +64,7 @@ defmodule CoreWeb.PostControllerTest do
 
     test "requires authentication", %{conn: conn} do
       conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
-
-      conn = get(conn, Routes.post_path(conn, :show, id))
-
-      # TODO: why isn't the exception being converted into a JSON view?
-      assert json_response(conn, 401) == "unauthorized"
+      assert json_response(conn, 401)["errors"]["detail"] == "Unauthorized"
     end
   end
 
@@ -93,6 +91,11 @@ defmodule CoreWeb.PostControllerTest do
       conn = put(conn, Routes.post_path(conn, :update, post), post: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "requires authentication", %{conn: conn, post: post} do
+      conn = put(conn, Routes.post_path(conn, :update, post), post: @update_attrs)
+      assert json_response(conn, 401)["errors"]["detail"] == "Unauthorized"
+    end
   end
 
   describe "delete post" do
@@ -103,9 +106,13 @@ defmodule CoreWeb.PostControllerTest do
       conn = delete(conn, Routes.post_path(conn, :delete, post))
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.post_path(conn, :show, post))
-      end
+      conn = get(conn, Routes.post_path(conn, :show, post))
+      assert json_response(conn, 404)["errors"]["detail"] == "Not Found"
+    end
+
+    test "requires authentication", %{conn: conn, post: post} do
+      conn = delete(conn, Routes.post_path(conn, :delete, post))
+      assert json_response(conn, 401)["errors"]["detail"] == "Unauthorized"
     end
   end
 
