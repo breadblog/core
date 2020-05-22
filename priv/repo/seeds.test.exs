@@ -19,14 +19,13 @@ curr_user =
     password: "St1ngs?!"
   })
 
-curr_user_post =
-  Core.Contents.create_post!(%{
-    author_id: curr_user.id,
-    title: "My Post",
-    description: "My Post Description",
-    published: false,
-    body: "a body"
-  })
+Core.Contents.create_post!(%{
+  author_id: curr_user.id,
+  title: "My Post",
+  description: "My Post Description",
+  published: false,
+  body: "a body"
+})
 
 # Create other user information
 

@@ -27,30 +27,12 @@ defmodule CoreWeb.TagControllerTest do
     test "lists all tags", %{conn: conn} do
       conn = get(conn, Routes.tag_path(conn, :index))
 
-      assert json_response(conn, 200)["data"] ==
-               [
-                 %{
-                   "description" => "A functional programming language that compiles to erlang",
-                   "id" => 1,
-                   "name" => "elixir"
-                 },
-                 %{
-                   "description" =>
-                     "A functional programming language that compiles to javascript",
-                   "id" => 2,
-                   "name" => "elm"
-                 },
-                 %{
-                   "description" => "A multi-paradigm language often used to build web clients",
-                   "id" => 3,
-                   "name" => "javascript"
-                 },
-                 %{
-                   "description" => "Your ability to control who knows your private information",
-                   "id" => 4,
-                   "name" => "privacy"
-                 }
-               ]
+      data = json_response(conn, 200)["data"]
+      assert length(data) == 4
+      assert Enum.find(data, &(&1["name"] == "elixir"))
+      assert Enum.find(data, &(&1["name"] == "elm"))
+      assert Enum.find(data, &(&1["name"] == "javascript"))
+      assert Enum.find(data, &(&1["name"] == "privacy"))
     end
   end
 
