@@ -20,3 +20,5 @@ config :core, CoreWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :joken, default_signer: "WuwqKAuA5Zaooj2EXyXo6Q5qhYUB90oL"

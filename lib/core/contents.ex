@@ -28,14 +28,19 @@ defmodule Core.Contents do
 
   ## Examples
 
-      iex> get_tag!(123)
-      %Tag{}
+      iex> get_tag(123)
+      {:ok, %Tag{}}
 
-      iex> get_tag!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_tag(456)
+      {:error, :not_found}
 
   """
-  def get_tag!(id), do: Repo.get!(Tag, id)
+  def get_tag(id) do
+    case Repo.get(Tag, id) do
+      %Tag{} = tag -> {:ok, tag}
+      _ -> {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a tag.
@@ -53,6 +58,12 @@ defmodule Core.Contents do
     %Tag{}
     |> Tag.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_tag!(attrs \\ %{}) do
+    %Tag{}
+    |> Tag.changeset(attrs)
+    |> Repo.insert!()
   end
 
   @doc """
@@ -124,14 +135,19 @@ defmodule Core.Contents do
 
   ## Examples
 
-      iex> get_post!(123)
+      iex> get_post(123)
       %Post{}
 
-      iex> get_post!(456)
+      iex> get_post(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Repo.get!(Post, id)
+  def get_post(id) do
+    case Repo.get(Post, id) do
+      %Post{} = post -> {:ok, post}
+      _ -> {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a post.
@@ -149,6 +165,12 @@ defmodule Core.Contents do
     %Post{}
     |> Post.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def create_post!(attrs \\ %{}) do
+    %Post{}
+    |> Post.changeset(attrs)
+    |> Repo.insert!()
   end
 
   @doc """

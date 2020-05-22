@@ -26,11 +26,36 @@ defmodule CoreWeb.TagControllerTest do
   describe "index" do
     test "lists all tags", %{conn: conn} do
       conn = get(conn, Routes.tag_path(conn, :index))
-      assert json_response(conn, 200)["data"] == []
+
+      assert json_response(conn, 200)["data"] ==
+               [
+                 %{
+                   "description" => "A functional programming language that compiles to erlang",
+                   "id" => 1,
+                   "name" => "elixir"
+                 },
+                 %{
+                   "description" =>
+                     "A functional programming language that compiles to javascript",
+                   "id" => 2,
+                   "name" => "elm"
+                 },
+                 %{
+                   "description" => "A multi-paradigm language often used to build web clients",
+                   "id" => 3,
+                   "name" => "javascript"
+                 },
+                 %{
+                   "description" => "Your ability to control who knows your private information",
+                   "id" => 4,
+                   "name" => "privacy"
+                 }
+               ]
     end
   end
 
   describe "create tag" do
+    @tag :authenticated
     test "renders tag when data is valid", %{conn: conn} do
       conn = post(conn, Routes.tag_path(conn, :create), tag: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -44,6 +69,7 @@ defmodule CoreWeb.TagControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
+    @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.tag_path(conn, :create), tag: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
@@ -53,6 +79,7 @@ defmodule CoreWeb.TagControllerTest do
   describe "update tag" do
     setup [:create_tag]
 
+    @tag :authenticated
     test "renders tag when data is valid", %{conn: conn, tag: %Tag{id: id} = tag} do
       conn = put(conn, Routes.tag_path(conn, :update, tag), tag: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
@@ -66,6 +93,7 @@ defmodule CoreWeb.TagControllerTest do
              } = json_response(conn, 200)["data"]
     end
 
+    @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn, tag: tag} do
       conn = put(conn, Routes.tag_path(conn, :update, tag), tag: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
@@ -75,13 +103,13 @@ defmodule CoreWeb.TagControllerTest do
   describe "delete tag" do
     setup [:create_tag]
 
+    @tag :authenticated
     test "deletes chosen tag", %{conn: conn, tag: tag} do
       conn = delete(conn, Routes.tag_path(conn, :delete, tag))
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, Routes.tag_path(conn, :show, tag))
-      end
+      conn = get(conn, Routes.tag_path(conn, :show, tag))
+      assert json_response(conn, 404) == %{"errors" => %{"detail" => "Not Found"}}
     end
   end
 

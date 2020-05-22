@@ -6,6 +6,8 @@ defmodule CoreWeb.TagController do
 
   action_fallback CoreWeb.FallbackController
 
+  plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
+
   def index(conn, _params) do
     tags = Contents.list_tags()
     render(conn, "index.json", tags: tags)
@@ -21,22 +23,20 @@ defmodule CoreWeb.TagController do
   end
 
   def show(conn, %{"id" => id}) do
-    tag = Contents.get_tag!(id)
-    render(conn, "show.json", tag: tag)
+    with {:ok, tag} <- Contents.get_tag(id),
+         do: render(conn, "show.json", tag: tag)
   end
 
   def update(conn, %{"id" => id, "tag" => tag_params}) do
-    tag = Contents.get_tag!(id)
-
-    with {:ok, %Tag{} = tag} <- Contents.update_tag(tag, tag_params) do
+    with {:ok, tag} <- Contents.get_tag(id),
+         {:ok, %Tag{} = tag} <- Contents.update_tag(tag, tag_params) do
       render(conn, "show.json", tag: tag)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    tag = Contents.get_tag!(id)
-
-    with {:ok, %Tag{}} <- Contents.delete_tag(tag) do
+    with {:ok, tag} <- Contents.get_tag(id),
+         {:ok, %Tag{}} <- Contents.delete_tag(tag) do
       send_resp(conn, :no_content, "")
     end
   end

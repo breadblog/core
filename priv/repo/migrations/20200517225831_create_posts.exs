@@ -6,6 +6,7 @@ defmodule Core.Repo.Migrations.CreatePosts do
       add :title, :string
       add :description, :string
       add :body, :string
+      add :published, :boolean
       add :author_id, references(:users, on_delete: :nothing)
 
       timestamps()

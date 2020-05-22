@@ -17,6 +17,14 @@ defmodule CoreWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  @default_opts [
+    store: :cookie,
+    key: "Dz820gfY2Kej7muxQqhmQLI727tXWN3M",
+    encryption_salt: "XVAgHLAz9ZvIWGSkWAhzBOJKMoz8TvFG",
+    signing_salt: "signing salt"
+  ]
+  @signing_opts Plug.Session.init(Keyword.put(@default_opts, :encrypt, false))
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -38,6 +46,21 @@ defmodule CoreWeb.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(Core.Repo, {:shared, self()})
     end
 
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    if tags[:authenticated] do
+      username = "frodo"
+      password = "St1ngs?!"
+
+      {:ok, token, _} = Core.Accounts.login(username, password)
+
+      conn =
+        Phoenix.ConnTest.build_conn()
+        |> Plug.Session.call(@signing_opts)
+        |> Plug.Conn.fetch_session()
+        |> Plug.Conn.put_session(:token, token)
+
+      {:ok, conn: conn}
+    else
+      {:ok, conn: Phoenix.ConnTest.build_conn()}
+    end
   end
 end

@@ -6,9 +6,11 @@ defmodule CoreWeb.PostController do
 
   action_fallback CoreWeb.FallbackController
 
+  plug CoreWeb.Plugs.Authenticate when action in [:create, :update, :delete]
+
   def index(conn, _params) do
     posts = Contents.list_posts()
-    render(conn, "index.json", posts: posts)
+    render(conn, "index.json", posts: posts, curr_user: conn.assigns.curr_user)
   end
 
   def create(conn, %{"post" => post_params}) do
@@ -21,22 +23,20 @@ defmodule CoreWeb.PostController do
   end
 
   def show(conn, %{"id" => id}) do
-    post = Contents.get_post!(id)
-    render(conn, "show.json", post: post)
+    with {:ok, post} <- Contents.get_post(id),
+         do: render(conn, "show.json", post: post)
   end
 
   def update(conn, %{"id" => id, "post" => post_params}) do
-    post = Contents.get_post!(id)
-
-    with {:ok, %Post{} = post} <- Contents.update_post(post, post_params) do
+    with {:ok, post} <- Contents.get_post(id),
+         {:ok, %Post{} = post} <- Contents.update_post(post, post_params) do
       render(conn, "show.json", post: post)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    post = Contents.get_post!(id)
-
-    with {:ok, %Post{}} <- Contents.delete_post(post) do
+    with {:ok, post} <- Contents.get_post(id),
+         {:ok, %Post{}} <- Contents.delete_post(post) do
       send_resp(conn, :no_content, "")
     end
   end
