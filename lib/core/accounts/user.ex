@@ -1,6 +1,7 @@
 defmodule Core.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Core.Contents.Post
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -8,6 +9,7 @@ defmodule Core.Accounts.User do
     field :name, :string
     field :password, :string
     field :username, :string
+    has_many :posts, Post, foreign_key: :author_id
 
     timestamps()
   end

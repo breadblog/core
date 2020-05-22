@@ -23,7 +23,8 @@ defmodule CoreWeb.PostView do
           title: post.title,
           description: post.description,
           body: post.body,
-          published: post.published
+          published: post.published,
+          author_id: post.author_id
         }
 
       _ ->
@@ -36,7 +37,8 @@ defmodule CoreWeb.PostView do
       id: post.id,
       title: post.title,
       description: post.description,
-      body: post.body
+      body: post.body,
+      author_id: post.author_id
     }
   end
 end

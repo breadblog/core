@@ -7,6 +7,7 @@ defmodule Core.Contents do
   alias Core.Repo
 
   alias Core.Contents.Tag
+  alias Core.Accounts.User
 
   @doc """
   Returns the list of tags.
@@ -161,8 +162,9 @@ defmodule Core.Contents do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_post(attrs \\ %{}) do
-    %Post{}
+  def create_post(attrs \\ %{}, curr_user = %User{}) do
+    curr_user
+    |> Ecto.build_assoc(:posts)
     |> Post.changeset(attrs)
     |> Repo.insert()
   end
