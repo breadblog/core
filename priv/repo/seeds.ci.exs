@@ -1,1 +1,1 @@
-Code.eval_file "seeds.test.exs"
+Code.eval_file "priv/repo/seeds.test.exs"
