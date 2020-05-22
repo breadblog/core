@@ -4,6 +4,8 @@ defmodule Core.Contents.Post do
   alias Core.Contents.Tag
   alias Core.Accounts.User
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "posts" do
     field :body, :string
     field :description, :string

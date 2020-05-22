@@ -3,6 +3,8 @@ defmodule Core.Contents.Tag do
   import Ecto.Changeset
   alias Core.Contents.Post
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "tags" do
     field :description, :string
     field :name, :string
