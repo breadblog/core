@@ -5,16 +5,16 @@ defmodule CoreWeb.UserControllerTest do
   alias Core.Accounts.User
 
   @create_attrs %{
-    name: "some name",
-    password: "some password A1!",
-    username: "someusername"
+    "name" => "some name",
+    "password" => "some password A1!",
+    "username" => "someusername"
   }
   @update_attrs %{
-    name: "some updated name",
-    password: "some updated password A1!",
-    username: "updatedusername"
+    "name" => "some updated name",
+    "password" => "some updated password A1!",
+    "username" => "updatedusername"
   }
-  @invalid_attrs %{name: nil, password: "badpassword", username: nil}
+  @invalid_attrs %{"name" => nil, "password" => "badpassword", "username" => nil}
 
   def fixture(:user) do
     {:ok, user} = Accounts.create_user(@create_attrs)

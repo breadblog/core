@@ -5,14 +5,14 @@ defmodule CoreWeb.TagControllerTest do
   alias Core.Contents.Tag
 
   @create_attrs %{
-    description: "some description",
-    name: "somename"
+    "description" => "some description",
+    "name" => "somename"
   }
   @update_attrs %{
-    description: "some updated description",
-    name: "updatename"
+    "description" => "some updated description",
+    "name" => "updatename"
   }
-  @invalid_attrs %{description: nil, name: nil}
+  @invalid_attrs %{"description" => nil, "name" => nil}
 
   def fixture(:tag) do
     {:ok, tag} = Contents.create_tag(@create_attrs)

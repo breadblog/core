@@ -6,18 +6,10 @@ defmodule Core.AccountsTest do
   describe "users" do
     alias Core.Accounts.User
 
-    @valid_attrs %{name: "some name", password: "some password A1!", username: "someusername"}
-    @update_attrs %{
-      name: "some updated name",
-      password: "some updated password A1!",
-      username: "updatedusername"
-    }
-    @invalid_attrs %{name: nil, password: "badpassword", username: nil}
-
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
         attrs
-        |> Enum.into(@valid_attrs)
+        |> Enum.into(build(:user))
         |> Accounts.create_user()
 
       user
@@ -37,11 +29,12 @@ defmodule Core.AccountsTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.name == @valid_attrs.name
-      assert user.password != @valid_attrs.password
+      attrs = build(:user)
+      assert {:ok, %User{} = user} = Accounts.create_user(attrs)
+      assert user.name == attrs.name
+      assert user.password != attrs.password
       assert user.password != nil
-      assert user.username == @valid_attrs.username
+      assert user.username == attrs.username
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -49,13 +42,14 @@ defmodule Core.AccountsTest do
     end
 
     test "update_user/2 with valid data updates the user" do
+      attrs = build(:user, :update)
       user = user_fixture()
-      assert {:ok, %User{} = user} = Accounts.update_user(user, @update_attrs)
-      assert user.name == @update_attrs.name
-      assert user.password != @valid_attrs.password
-      assert user.password != @update_attrs.password
+      assert {:ok, %User{} = user} = Accounts.update_user(user, attrs)
+      assert user.name == attrs.name
+      assert user.password != build(:user).password
+      assert user.password != attrs.password
       assert user.password != nil
-      assert user.username == @update_attrs.username
+      assert user.username == attrs.username
     end
 
     test "update_user/2 with invalid data returns error changeset" do

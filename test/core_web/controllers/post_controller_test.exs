@@ -5,18 +5,18 @@ defmodule CoreWeb.PostControllerTest do
   alias Core.Contents.Post
 
   @create_attrs %{
-    body: "some body",
-    description: "some description",
-    title: "some title",
-    published: true
+    "body" => "some body",
+    "description" => "some description",
+    "title" => "some title",
+    "published" => true
   }
   @update_attrs %{
-    body: "some updated body",
-    description: "some updated description",
-    title: "some updated title",
-    published: false
+    "body" => "some updated body",
+    "description" => "some updated description",
+    "title" => "some updated title",
+    "published" => false
   }
-  @invalid_attrs %{body: nil, description: nil, title: nil, published: nil}
+  @invalid_attrs %{"body" => nil, "description" => nil, "title" => nil, "published" => nil}
 
   def fixture(:post) do
     {:ok, post} = Contents.create_post(@create_attrs)
