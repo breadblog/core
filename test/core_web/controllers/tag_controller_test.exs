@@ -1,21 +1,12 @@
 defmodule CoreWeb.TagControllerTest do
   use CoreWeb.ConnCase
 
+  import Core.Factory
   alias Core.Contents
   alias Core.Contents.Tag
 
-  @create_attrs %{
-    description: "some description",
-    name: "somename"
-  }
-  @update_attrs %{
-    description: "some updated description",
-    name: "updatename"
-  }
-  @invalid_attrs %{description: nil, name: nil}
-
   def fixture(:tag) do
-    {:ok, tag} = Contents.create_tag(@create_attrs)
+    {:ok, tag} = Contents.create_tag(build(:tag))
     tag
   end
 
@@ -39,21 +30,24 @@ defmodule CoreWeb.TagControllerTest do
   describe "create tag" do
     @tag :authenticated
     test "renders tag when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.tag_path(conn, :create), tag: @create_attrs)
+      attrs = build(:tag)
+      conn = post(conn, Routes.tag_path(conn, :create), tag: attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.tag_path(conn, :show, id))
 
-      assert %{
-               "id" => id,
-               "description" => "some description",
-               "name" => "somename"
-             } = json_response(conn, 200)["data"]
+      expected = %{
+        "id" => id,
+        "description" => attrs["description"],
+        "name" => attrs["name"]
+      }
+
+      assert ^expected = json_response(conn, 200)["data"]
     end
 
     @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.tag_path(conn, :create), tag: @invalid_attrs)
+      conn = post(conn, Routes.tag_path(conn, :create), tag: build(:tag, :invalid))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -63,21 +57,24 @@ defmodule CoreWeb.TagControllerTest do
 
     @tag :authenticated
     test "renders tag when data is valid", %{conn: conn, tag: %Tag{id: id} = tag} do
-      conn = put(conn, Routes.tag_path(conn, :update, tag), tag: @update_attrs)
+      attrs = build(:tag, :update)
+      conn = put(conn, Routes.tag_path(conn, :update, tag), tag: attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.tag_path(conn, :show, id))
 
-      assert %{
-               "id" => id,
-               "description" => "some updated description",
-               "name" => "updatename"
-             } = json_response(conn, 200)["data"]
+      expected = %{
+        "id" => id,
+        "description" => attrs["description"],
+        "name" => attrs["name"]
+      }
+
+      assert ^expected = json_response(conn, 200)["data"]
     end
 
     @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn, tag: tag} do
-      conn = put(conn, Routes.tag_path(conn, :update, tag), tag: @invalid_attrs)
+      conn = put(conn, Routes.tag_path(conn, :update, tag), tag: build(:tag, :invalid))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

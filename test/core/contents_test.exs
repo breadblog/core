@@ -1,19 +1,17 @@
 defmodule Core.ContentsTest do
   use Core.DataCase
 
+  import Core.Factory
   alias Core.Contents
+  alias Core.Accounts.User
 
   describe "tags" do
     alias Core.Contents.Tag
 
-    @valid_attrs %{description: "some description", name: "tagname"}
-    @update_attrs %{description: "some updated description", name: "updatename"}
-    @invalid_attrs %{description: nil, name: nil}
-
     def tag_fixture(attrs \\ %{}) do
       {:ok, tag} =
         attrs
-        |> Enum.into(@valid_attrs)
+        |> Enum.into(build(:tag))
         |> Contents.create_tag()
 
       tag
@@ -33,25 +31,28 @@ defmodule Core.ContentsTest do
     end
 
     test "create_tag/1 with valid data creates a tag" do
-      assert {:ok, %Tag{} = tag} = Contents.create_tag(@valid_attrs)
-      assert tag.description == @valid_attrs.description
-      assert tag.name == @valid_attrs.name
+      attrs = build(:tag)
+      assert {:ok, %Tag{} = tag} = Contents.create_tag(attrs)
+      assert tag.description == attrs["description"]
+      assert tag.name == attrs["name"]
     end
 
     test "create_tag/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Contents.create_tag(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Contents.create_tag(build(:tag, :invalid))
     end
 
     test "update_tag/2 with valid data updates the tag" do
+      attrs = build(:tag, :update)
       tag = tag_fixture()
-      assert {:ok, %Tag{} = tag} = Contents.update_tag(tag, @update_attrs)
-      assert tag.description == @update_attrs.description
-      assert tag.name == @update_attrs.name
+      assert {:ok, %Tag{} = tag} = Contents.update_tag(tag, attrs)
+      assert tag.description == attrs["description"]
+      assert tag.name == attrs["name"]
     end
 
     test "update_tag/2 with invalid data returns error changeset" do
+      attrs = build(:tag, :invalid)
       tag = tag_fixture()
-      assert {:error, %Ecto.Changeset{}} = Contents.update_tag(tag, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Contents.update_tag(tag, attrs)
       assert {:ok, tag} == Contents.get_tag(tag.id)
     end
 
@@ -70,25 +71,13 @@ defmodule Core.ContentsTest do
   describe "posts" do
     alias Core.Contents.Post
 
-    @valid_attrs %{
-      body: "some body",
-      description: "some description",
-      title: "some title",
-      published: true
-    }
-    @update_attrs %{
-      body: "some updated body",
-      description: "some updated description",
-      title: "some updated title",
-      published: false
-    }
-    @invalid_attrs %{body: nil, description: nil, title: nil, published: nil}
+    setup :load_curr_user
 
     def post_fixture(attrs \\ %{}) do
       {:ok, post} =
         attrs
-        |> Enum.into(@valid_attrs)
-        |> Contents.create_post()
+        |> Enum.into(build(:post))
+        |> Contents.create_post(fetch_curr_user())
 
       post
     end
@@ -98,39 +87,44 @@ defmodule Core.ContentsTest do
       posts = Contents.list_posts()
       assert Enum.all?(posts, &(&1 = %Post{}))
       assert length(posts) == 3
-      assert Enum.member?(posts, post)
+      assert Enum.find(posts, fn p -> p.id == post.id end)
     end
 
     test "get_post/1 returns the post with given id" do
       post = post_fixture()
-      assert Contents.get_post(post.id) == {:ok, post}
+      assert {:ok, actual} = Contents.get_post(post.id)
+      assert actual == post
     end
 
-    test "create_post/1 with valid data creates a post" do
-      assert {:ok, %Post{} = post} = Contents.create_post(@valid_attrs)
-      assert post.body == "some body"
-      assert post.description == "some description"
-      assert post.title == "some title"
-      assert post.published == true
+    test "create_post/1 with valid data creates a post", context do
+      attrs = build(:post)
+      curr_user = context[:curr_user]
+      assert {:ok, %Post{} = post} = Contents.create_post(attrs, curr_user)
+      assert post.body == attrs["body"]
+      assert post.description == attrs["description"]
+      assert post.title == attrs["title"]
+      assert post.published == attrs["published"]
     end
 
-    test "create_post/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Contents.create_post(@invalid_attrs)
+    test "create_post/1 with invalid data returns error changeset", %{curr_user: curr_user} do
+      assert {:error, %Ecto.Changeset{}} = Contents.create_post(build(:post, :invalid), curr_user)
     end
 
     test "update_post/2 with valid data updates the post" do
+      attrs = build(:post, :update)
       post = post_fixture()
-      assert {:ok, %Post{} = post} = Contents.update_post(post, @update_attrs)
-      assert post.body == "some updated body"
-      assert post.description == "some updated description"
-      assert post.title == "some updated title"
-      assert post.published == false
+      assert {:ok, %Post{} = post} = Contents.update_post(post, attrs)
+      assert post.body == attrs["body"]
+      assert post.description == attrs["description"]
+      assert post.title == attrs["title"]
+      assert post.published == attrs["published"]
     end
 
     test "update_post/2 with invalid data returns error changeset" do
       post = post_fixture()
-      assert {:error, %Ecto.Changeset{}} = Contents.update_post(post, @invalid_attrs)
-      assert {:ok, post} == Contents.get_post(post.id)
+      assert {:error, %Ecto.Changeset{}} = Contents.update_post(post, build(:post, :invalid))
+      assert {:ok, actual} = Contents.get_post(post.id)
+      assert post == actual
     end
 
     test "delete_post/1 deletes the post" do
@@ -143,5 +137,18 @@ defmodule Core.ContentsTest do
       post = post_fixture()
       assert %Ecto.Changeset{} = Contents.change_post(post)
     end
+  end
+
+  def fetch_curr_user() do
+    Repo.one!(
+      from User,
+        where: [username: "frodo"]
+    )
+  end
+
+  def load_curr_user(_context) do
+    user = fetch_curr_user()
+
+    {:ok, %{curr_user: user}}
   end
 end

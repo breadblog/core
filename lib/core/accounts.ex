@@ -39,6 +39,23 @@ defmodule Core.Accounts do
     Repo.all(User)
   end
 
+  def get_user(%{"username" => username}) do
+    case Repo.one(
+           from User,
+             where: [username: ^username]
+         ) do
+      %User{} = user -> {:ok, user}
+      _ -> {:error, :not_found}
+    end
+  end
+
+  def get_user(%{"id" => id}) do
+    case Repo.get(User, id) do
+      %User{} = user -> {:ok, user}
+      _ -> {:error, :not_found}
+    end
+  end
+
   @doc """
   Gets a single user.
 
@@ -54,10 +71,7 @@ defmodule Core.Accounts do
 
   """
   def get_user(id) do
-    case Repo.get(User, id) do
-      %User{} = user -> {:ok, user}
-      _ -> {:error, :not_found}
-    end
+    get_user(%{"id" => id})
   end
 
   @doc """

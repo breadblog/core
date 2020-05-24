@@ -1,23 +1,12 @@
 defmodule CoreWeb.UserControllerTest do
   use CoreWeb.ConnCase
 
+  import Core.Factory
   alias Core.Accounts
   alias Core.Accounts.User
 
-  @create_attrs %{
-    name: "some name",
-    password: "some password A1!",
-    username: "someusername"
-  }
-  @update_attrs %{
-    name: "some updated name",
-    password: "some updated password A1!",
-    username: "updatedusername"
-  }
-  @invalid_attrs %{name: nil, password: "badpassword", username: nil}
-
   def fixture(:user) do
-    {:ok, user} = Accounts.create_user(@create_attrs)
+    {:ok, user} = Accounts.create_user(build(:user))
     user
   end
 
@@ -35,13 +24,13 @@ defmodule CoreWeb.UserControllerTest do
     end
   end
 
-  # TODO: fix
   # TODO: test authenticated routes require auth
 
   describe "create user" do
     @tag :authenticated
     test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.user_path(conn, :create), user: @create_attrs)
+      attrs = build(:user)
+      conn = post(conn, Routes.user_path(conn, :create), user: attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.user_path(conn, :show, id))
@@ -49,14 +38,14 @@ defmodule CoreWeb.UserControllerTest do
       res = json_response(conn, 200)["data"]
 
       assert res["id"] == id
-      assert res["name"] == @create_attrs.name
-      assert res["username"] == @create_attrs.username
+      assert res["name"] == attrs["name"]
+      assert res["username"] == attrs["username"]
       assert res["password"] == nil
     end
 
     @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.user_path(conn, :create), user: @invalid_attrs)
+      conn = post(conn, Routes.user_path(conn, :create), user: build(:user, :invalid))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -66,7 +55,8 @@ defmodule CoreWeb.UserControllerTest do
 
     @tag :authenticated
     test "renders user when data is valid", %{conn: conn, user: %User{id: id} = user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @update_attrs)
+      attrs = build(:user, :update)
+      conn = put(conn, Routes.user_path(conn, :update, user), user: attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.user_path(conn, :show, id))
@@ -74,14 +64,14 @@ defmodule CoreWeb.UserControllerTest do
       res = json_response(conn, 200)["data"]
 
       assert res["id"] == id
-      assert res["name"] == @update_attrs.name
-      assert res["username"] == @update_attrs.username
+      assert res["name"] == attrs["name"]
+      assert res["username"] == attrs["username"]
       assert res["password"] == nil
     end
 
     @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, Routes.user_path(conn, :update, user), user: @invalid_attrs)
+      conn = put(conn, Routes.user_path(conn, :update, user), user: build(:user, :invalid))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end

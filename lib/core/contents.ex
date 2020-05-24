@@ -4,9 +4,12 @@ defmodule Core.Contents do
   """
 
   import Ecto.Query, warn: false
-  alias Core.Repo
+  alias Ecto.Changeset
 
+  alias Core.Repo
   alias Core.Contents.Tag
+  alias Core.Contents.Post
+  alias Core.Accounts.User
 
   @doc """
   Returns the list of tags.
@@ -19,6 +22,20 @@ defmodule Core.Contents do
   """
   def list_tags do
     Repo.all(Tag)
+  end
+
+  @doc """
+  Returns a list of tags associated with a given post
+
+  ## Examples
+
+    iex> list_post_tags(Repo.get!(Post, "e6a380dc-acf3-4cd8-908c-21317b683b75"))
+    [%Tag{}, ...]
+  """
+  def list_post_tags(%Post{} = post) do
+    post
+    |> Repo.preload(:tags)
+    |> Map.get(:tags, [])
   end
 
   @doc """
@@ -113,8 +130,6 @@ defmodule Core.Contents do
     Tag.changeset(tag, attrs)
   end
 
-  alias Core.Contents.Post
-
   @doc """
   Returns the list of posts.
 
@@ -125,7 +140,10 @@ defmodule Core.Contents do
 
   """
   def list_posts do
-    Repo.all(Post)
+    Repo.all(
+      from p in Post,
+        preload: [:tags]
+    )
   end
 
   @doc """
@@ -143,7 +161,11 @@ defmodule Core.Contents do
 
   """
   def get_post(id) do
-    case Repo.get(Post, id) do
+    case Repo.one(
+           from p in Post,
+             where: [id: ^id],
+             preload: [:tags]
+         ) do
       %Post{} = post -> {:ok, post}
       _ -> {:error, :not_found}
     end
@@ -161,16 +183,22 @@ defmodule Core.Contents do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_post(attrs \\ %{}) do
-    %Post{}
-    |> Post.changeset(attrs)
+  def create_post(attrs \\ %{}, curr_user = %User{}) do
+    create_post_changeset(attrs, curr_user)
     |> Repo.insert()
   end
 
-  def create_post!(attrs \\ %{}) do
-    %Post{}
-    |> Post.changeset(attrs)
+  def create_post!(attrs \\ %{}, curr_user = %User{}) do
+    create_post_changeset(attrs, curr_user)
     |> Repo.insert!()
+  end
+
+  defp create_post_changeset(attrs = %{}, curr_user = %User{}) do
+    curr_user
+    |> Ecto.build_assoc(:posts)
+    |> Repo.preload(:tags)
+    |> Post.changeset(attrs)
+    |> Changeset.put_assoc(:tags, get_post_attr_tags(attrs))
   end
 
   @doc """
@@ -187,7 +215,9 @@ defmodule Core.Contents do
   """
   def update_post(%Post{} = post, attrs) do
     post
+    |> Repo.preload(:tags)
     |> Post.changeset(attrs)
+    |> Changeset.put_assoc(:tags, get_post_attr_tags(attrs))
     |> Repo.update()
   end
 
@@ -218,5 +248,17 @@ defmodule Core.Contents do
   """
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
+  end
+
+  defp get_post_attr_tags(attrs) do
+    tag_ids =
+      attrs
+      |> Map.get("tags", [])
+      |> Enum.map(&Map.get(&1, "id"))
+
+    Repo.all(
+      from t in Tag,
+        where: t.id in ^tag_ids
+    )
   end
 end
