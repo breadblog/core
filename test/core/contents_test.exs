@@ -33,8 +33,8 @@ defmodule Core.ContentsTest do
     test "create_tag/1 with valid data creates a tag" do
       attrs = build(:tag)
       assert {:ok, %Tag{} = tag} = Contents.create_tag(attrs)
-      assert tag.description == attrs.description
-      assert tag.name == attrs.name
+      assert tag.description == attrs["description"]
+      assert tag.name == attrs["name"]
     end
 
     test "create_tag/1 with invalid data returns error changeset" do
@@ -45,8 +45,8 @@ defmodule Core.ContentsTest do
       attrs = build(:tag, :update)
       tag = tag_fixture()
       assert {:ok, %Tag{} = tag} = Contents.update_tag(tag, attrs)
-      assert tag.description == attrs.description
-      assert tag.name == attrs.name
+      assert tag.description == attrs["description"]
+      assert tag.name == attrs["name"]
     end
 
     test "update_tag/2 with invalid data returns error changeset" do
@@ -92,37 +92,40 @@ defmodule Core.ContentsTest do
 
     test "get_post/1 returns the post with given id" do
       post = post_fixture()
-      assert Contents.get_post(post.id) == {:ok, post}
+      assert {:ok, actual} = Contents.get_post(post.id)
+      actual = Repo.preload(actual, :tags)
+      assert actual == post
     end
 
     test "create_post/1 with valid data creates a post", context do
       attrs = build(:post)
       curr_user = context[:curr_user]
       assert {:ok, %Post{} = post} = Contents.create_post(attrs, curr_user)
-      assert post.body == attrs.body
-      assert post.description == attrs.description
-      assert post.title == attrs.title
-      assert post.published == attrs.published
+      assert post.body == attrs["body"]
+      assert post.description == attrs["description"]
+      assert post.title == attrs["title"]
+      assert post.published == attrs["published"]
     end
 
-    test "create_post/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Contents.create_post(build(:post, :invalid))
+    test "create_post/1 with invalid data returns error changeset", %{curr_user: curr_user} do
+      assert {:error, %Ecto.Changeset{}} = Contents.create_post(build(:post, :invalid), curr_user)
     end
 
     test "update_post/2 with valid data updates the post" do
       attrs = build(:post, :update)
       post = post_fixture()
       assert {:ok, %Post{} = post} = Contents.update_post(post, attrs)
-      assert post.body == attrs.body
-      assert post.description == attrs.description
-      assert post.title == attrs.title
-      assert post.published == attrs.published
+      assert post.body == attrs["body"]
+      assert post.description == attrs["description"]
+      assert post.title == attrs["title"]
+      assert post.published == attrs["published"]
     end
 
     test "update_post/2 with invalid data returns error changeset" do
       post = post_fixture()
       assert {:error, %Ecto.Changeset{}} = Contents.update_post(post, build(:post, :invalid))
-      assert {:ok, post} == Contents.get_post(post.id)
+      assert {:ok, actual} = Contents.get_post(post.id)
+      assert post == Repo.preload(actual, :tags)
     end
 
     test "delete_post/1 deletes the post" do

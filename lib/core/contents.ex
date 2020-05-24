@@ -208,8 +208,8 @@ defmodule Core.Contents do
   """
   def update_post(%Post{} = post, attrs) do
     post
-    |> Post.changeset(attrs)
     |> Repo.preload(:tags)
+    |> Post.changeset(attrs)
     |> Changeset.put_assoc(:tags, get_post_attr_tags(attrs))
     |> Repo.update()
   end
