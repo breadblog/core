@@ -22,9 +22,9 @@ defmodule Core.Accounts.User do
     |> validate_length(:name, min: 2, max: 48)
     |> validate_format(:username, ~r/^[a-zA-Z0-9]*$/)
     |> validate_length(:username, min: 5, max: 16)
-    |> unique_constraint(:username)
     |> validate_format(:password, ~r/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)
     |> validate_length(:password, min: 8, max: 64)
     |> update_change(:password, &Argon2.hash_pwd_salt/1)
+    |> unique_constraint(:username)
   end
 end

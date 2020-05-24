@@ -11,7 +11,7 @@ defmodule Core.Contents.Post do
     field :description, :string
     field :title, :string
     field :published, :boolean
-    belongs_to :author, User
+    belongs_to :author, User, on_replace: :raise
     many_to_many :tags, Tag, join_through: "post_tags"
 
     timestamps()

@@ -1,5 +1,3 @@
-# Global data
-
 tags = [
   %{
     "name" => "elixir",
@@ -19,11 +17,12 @@ tags = [
   }
 ]
 
-tags
+tags_ids = tags
 |> Enum.map(&Core.Contents.create_tag!/1)
-|> Enum.map(&Map.from_struct/1)
+|> Enum.map(&Map.get(&1, :id))
 
 # Create current user information
+
 curr_user =
   Core.Accounts.create_user!(%{
     "name" => "Frodo Baggins",
@@ -39,9 +38,7 @@ Core.Contents.create_post!(
     "body" => "a body",
     "tags" => [
       %{
-        "id" => "49054959-c5bc-4714-8fc5-f908765805f6",
-        "name" => "privacy",
-        "description" => "Your ability to control who knows your private information"
+        "id" => Enum.at(tags_ids, 0),
       }
     ]
   },
@@ -65,14 +62,10 @@ Core.Contents.create_post!(
     "body" => "a body",
     "tags" => [
       %{
-        "id" => "e7d8d66a-3070-402a-93c7-4f65094cd986",
-        "name" => "elm",
-        "description" => "A functional programming language that compiles to javascript"
+        "id" => Enum.at(tags_ids, 1)
       },
       %{
-        "id" => "610f1e04-972e-4e18-9196-f774ed49e5da",
-        "name" => "javascript",
-        "description" => "A multi-paradigm language often used to build web clients"
+        "id" => Enum.at(tags_ids, 2)
       }
     ]
   },

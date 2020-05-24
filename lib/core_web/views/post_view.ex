@@ -1,6 +1,7 @@
 defmodule CoreWeb.PostView do
   use CoreWeb, :view
   alias CoreWeb.PostView
+  alias CoreWeb.TagView
   alias Core.Accounts.User
 
   def render("index.json", %{posts: posts}) do
@@ -15,7 +16,7 @@ defmodule CoreWeb.PostView do
 
   def render("post.json", %{post: post, curr_user: curr_user}) do
     author = post.author_id
-    # TODO: address as part of #30
+
     case curr_user do
       %User{id: ^author} ->
         %{
@@ -24,7 +25,8 @@ defmodule CoreWeb.PostView do
           description: post.description,
           body: post.body,
           published: post.published,
-          author_id: post.author_id
+          author_id: post.author_id,
+          tags: render_many(post.tags, TagView, "tag.json")
         }
 
       _ ->
@@ -38,7 +40,8 @@ defmodule CoreWeb.PostView do
       title: post.title,
       description: post.description,
       body: post.body,
-      author_id: post.author_id
+      author_id: post.author_id,
+      tags: render_many(post.tags, TagView, "tag.json")
     }
   end
 end

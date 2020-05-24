@@ -140,7 +140,10 @@ defmodule Core.Contents do
 
   """
   def list_posts do
-    Repo.all(Post)
+    Repo.all(
+      from p in Post,
+        preload: [:tags]
+    )
   end
 
   @doc """
@@ -158,7 +161,11 @@ defmodule Core.Contents do
 
   """
   def get_post(id) do
-    case Repo.get(Post, id) do
+    case Repo.one(
+           from p in Post,
+             where: [id: ^id],
+             preload: [:tags]
+         ) do
       %Post{} = post -> {:ok, post}
       _ -> {:error, :not_found}
     end

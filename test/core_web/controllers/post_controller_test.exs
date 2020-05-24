@@ -1,25 +1,13 @@
 defmodule CoreWeb.PostControllerTest do
   use CoreWeb.ConnCase
 
+  import Core.Factory
   alias Core.Contents
   alias Core.Contents.Post
+  alias Core.Accounts.User
 
-  @create_attrs %{
-    "body" => "some body",
-    "description" => "some description",
-    "title" => "some title",
-    "published" => true
-  }
-  @update_attrs %{
-    "body" => "some updated body",
-    "description" => "some updated description",
-    "title" => "some updated title",
-    "published" => false
-  }
-  @invalid_attrs %{"body" => nil, "description" => nil, "title" => nil, "published" => nil}
-
-  def fixture(:post) do
-    {:ok, post} = Contents.create_post(@create_attrs)
+  def fixture(:post, %User{} = user) do
+    {:ok, post} = Contents.create_post(build(:post), user)
     post
   end
 
@@ -43,7 +31,7 @@ defmodule CoreWeb.PostControllerTest do
   describe "create post" do
     @tag :authenticated
     test "renders post when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
+      conn = post(conn, Routes.post_path(conn, :create), post: build(:post))
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, Routes.post_path(conn, :show, id))
@@ -58,12 +46,12 @@ defmodule CoreWeb.PostControllerTest do
 
     @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, Routes.post_path(conn, :create), post: @invalid_attrs)
+      conn = post(conn, Routes.post_path(conn, :create), post: build(:post, :invalid))
       assert json_response(conn, 422)["errors"] != %{}
     end
 
     test "requires authentication", %{conn: conn} do
-      conn = post(conn, Routes.post_path(conn, :create), post: @create_attrs)
+      conn = post(conn, Routes.post_path(conn, :create), post: build(:post))
       assert json_response(conn, 401)["errors"]["detail"] == "Unauthorized"
     end
   end
@@ -73,7 +61,7 @@ defmodule CoreWeb.PostControllerTest do
 
     @tag :authenticated
     test "renders post when data is valid", %{conn: conn, post: %Post{id: id} = post} do
-      conn = put(conn, Routes.post_path(conn, :update, post), post: @update_attrs)
+      conn = put(conn, Routes.post_path(conn, :update, post), post: build(:post, :update))
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, Routes.post_path(conn, :show, id))
@@ -88,12 +76,12 @@ defmodule CoreWeb.PostControllerTest do
 
     @tag :authenticated
     test "renders errors when data is invalid", %{conn: conn, post: post} do
-      conn = put(conn, Routes.post_path(conn, :update, post), post: @invalid_attrs)
+      conn = put(conn, Routes.post_path(conn, :update, post), post: build(:post, :invalid))
       assert json_response(conn, 422)["errors"] != %{}
     end
 
     test "requires authentication", %{conn: conn, post: post} do
-      conn = put(conn, Routes.post_path(conn, :update, post), post: @update_attrs)
+      conn = put(conn, Routes.post_path(conn, :update, post), post: build(:post, :update))
       assert json_response(conn, 401)["errors"]["detail"] == "Unauthorized"
     end
   end
@@ -117,7 +105,8 @@ defmodule CoreWeb.PostControllerTest do
   end
 
   defp create_post(_) do
-    post = fixture(:post)
+    assert {:ok, curr_user} = Core.Accounts.get_user(%{"username" => "frodo"})
+    post = fixture(:post, curr_user)
     %{post: post}
   end
 end

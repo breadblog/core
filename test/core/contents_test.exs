@@ -93,7 +93,6 @@ defmodule Core.ContentsTest do
     test "get_post/1 returns the post with given id" do
       post = post_fixture()
       assert {:ok, actual} = Contents.get_post(post.id)
-      actual = Repo.preload(actual, :tags)
       assert actual == post
     end
 
@@ -125,7 +124,7 @@ defmodule Core.ContentsTest do
       post = post_fixture()
       assert {:error, %Ecto.Changeset{}} = Contents.update_post(post, build(:post, :invalid))
       assert {:ok, actual} = Contents.get_post(post.id)
-      assert post == Repo.preload(actual, :tags)
+      assert post == actual
     end
 
     test "delete_post/1 deletes the post" do

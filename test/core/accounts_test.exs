@@ -1,6 +1,6 @@
 defmodule Core.AccountsTest do
   use Core.DataCase
-
+  import Core.Factory
   alias Core.Accounts
 
   describe "users" do
@@ -31,30 +31,30 @@ defmodule Core.AccountsTest do
     test "create_user/1 with valid data creates a user" do
       attrs = build(:user)
       assert {:ok, %User{} = user} = Accounts.create_user(attrs)
-      assert user.name == attrs.name
-      assert user.password != attrs.password
+      assert user.name == attrs["name"]
+      assert user.password != attrs["password"]
       assert user.password != nil
-      assert user.username == attrs.username
+      assert user.username == attrs["username"]
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(build(:user, :invalid))
     end
 
     test "update_user/2 with valid data updates the user" do
       attrs = build(:user, :update)
       user = user_fixture()
       assert {:ok, %User{} = user} = Accounts.update_user(user, attrs)
-      assert user.name == attrs.name
-      assert user.password != build(:user).password
-      assert user.password != attrs.password
+      assert user.name == attrs["name"]
+      assert user.password != build(:user)["password"]
+      assert user.password != attrs["password"]
       assert user.password != nil
-      assert user.username == attrs.username
+      assert user.username == attrs["username"]
     end
 
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, build(:user, :invalid))
       assert {:ok, user} == Accounts.get_user(user.id)
     end
 
