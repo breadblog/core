@@ -34,7 +34,6 @@ defmodule Core.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:distillery, "~> 2.1"},
       {:joken, "~> 2.2"},
       {:argon2_elixir, "~> 2.0"},
       {:phoenix, "~> 1.5.1"},
