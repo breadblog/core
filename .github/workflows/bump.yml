@@ -14,10 +14,8 @@ jobs:
         nix_path: nixpkgs=channel:nixos-unstable
     - name: enter shell
       run: nix-shell --arg includeElixir false --arg includeDeploy false
-    - name: test
-      run: "echo $PWD"
     - name: bump version
-      run: "./scripts/bump_version $PWD/VERSION"
+      run: make bump
     - name: commit
       run: |
         git config --local user.email "action@github.com"

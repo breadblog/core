@@ -16,3 +16,8 @@ release:
 .PHONY: zip
 zip:
 	- nix-shell --run "tar -C ./_build/prod/rel -czf ./_build/prod/rel/core.tar.gz ./core"
+
+
+.PHONY: bump
+bump:
+	- nix-shell --arg includeElixir false --arg includeDeploy false --run "./scripts/bump_version $$PWD/VERSION"

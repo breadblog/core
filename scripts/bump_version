@@ -7,8 +7,12 @@ version_file=$1
 # get latest tag (to limit messages)
 t=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
 
+cmd="cat ${version_file}"
+
 # get latest version
-version=$(cat $version_file)
+version="$(cat "$version_file")"
+
+echo "got version ${version}"
 
 # if there are none, get all
 if [ -z "$t" ]
@@ -24,4 +28,6 @@ case "$log" in
     * ) new=$(semver bump minor $version);;
 esac
 
-echo $new > $SRC/VERSION
+echo $new > $version_file
+
+echo "updated to version ${new}"
