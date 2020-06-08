@@ -33,3 +33,5 @@ core-*.tar
 
 # language server
 /.elixir_ls/
+
+/result

@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - name: enter shell
+      run: nix-shell
+    - name: set env
+      run: |
+        echo '::set-env name=VERSION::$(cat VERSION)'
+    - name: dependencies
+      run: mix deps.get
+    - name: build
+      run: make
+    - uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        draft: false
+        prerelease: false
