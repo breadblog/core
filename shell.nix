@@ -2,7 +2,7 @@
 
 let
   nixpkgs =
-    import ../nixpkgs.nix {};
+    import ./nixpkgs.nix {};
 
   pkgs =
     import nixpkgs { config = {}; };
