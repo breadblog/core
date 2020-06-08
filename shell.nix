@@ -1,4 +1,8 @@
-{ env ? "dev" }:
+{
+  env ? "dev",
+  includeElixir ? true,
+  includeDeploy ? true
+}:
 
 let
   nixpkgs =
@@ -17,13 +21,19 @@ mkShell {
   LOCALE_ARCHIVE_2_11 = "${glibcLocales}/lib/locale/locale-archive";
   LANG = "en_US.UTF-8";
 
-  buildInputs = [
-    elixir
-    nixops
-    gnumake
-    semver-tool
-    glibcLocales
-    beamPackages.hex
+  buildInputs = builtins.concatLists [
+    [
+      gnumake
+      semver-tool
+      glibcLocales
+    ]
+    (if includeElixir then [
+      elixir
+      beamPackages.hex
+    ] else [])
+    (if includeDeploy then [
+      nixops
+    ] else [])
   ];
 }
 
