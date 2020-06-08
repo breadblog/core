@@ -98,12 +98,14 @@ jobs:
     - name: build
       run: make
     - uses: actions/create-release@v1
+      id: create-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ env.VERSION }}
         draft: false
         prerelease: false
+        release_name: Release v${{ env.VERSION }}
     - uses: actions/upload-release-asset@v1
       id: upload-release-asset 
       env:
