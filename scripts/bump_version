@@ -22,6 +22,8 @@ else
     log=$(git log $t..HEAD --pretty=oneline)
 fi
 
+echo "updating version based on log:\n\n${log}"
+
 case "$log" in
     *#major* ) new=$(semver bump major $version);;
     *#patch* ) new=$(semver bump patch $version);;
