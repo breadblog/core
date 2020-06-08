@@ -1,0 +1,33 @@
+name: Bump Version
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  bump:
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        otp: [22.2]
+        elixir: [1.10.3]
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - name: enter shell
+      run: nix-shell
+    - name: bump version
+      run: ./scripts/bump_version $PWD/VERSION
+    - name: commit
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "Version Buddy"
+        git add VERSION
+        git commit -m "bump version to $(cat VERSION)"
+        git tag $(cat VERSION)
+    - uses: ad-m/github-push-action@0.6
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        tags: true

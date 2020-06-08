@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# modified from https://itnext.io/creating-a-github-action-to-tag-commits-2722f1560dec #
+
+$version_file=$1
+$repo=$2
+$token=$3
+$ref=$4
+
+$version=$(cat $version_file)
+
+# POST a new ref to repo via Github API
+curl -s -X POST https://api.github.com/repos/$repo/git/refs \
+-H "Authorization: token $token" \
+-d @- << EOF
+{
+  "ref": "refs/tags/$version",
+  "sha": "$ref"
+}

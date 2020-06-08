@@ -4,7 +4,7 @@ defmodule Core.MixProject do
   def project do
     [
       app: :core,
-      version: "0.1.0",
+      version: version(),
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -34,7 +34,6 @@ defmodule Core.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:distillery, "~> 2.1"},
       {:joken, "~> 2.2"},
       {:argon2_elixir, "~> 2.0"},
       {:phoenix, "~> 1.5.1"},
@@ -64,5 +63,9 @@ defmodule Core.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
+  end
+
+  defp version() do
+    File.read!("./VERSION") |> String.replace(~r/\n/, "")
   end
 end
