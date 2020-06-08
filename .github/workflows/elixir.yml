@@ -60,3 +60,47 @@ jobs:
 
     - name: Tests
       run: mix test
+  bump:
+    runs-on: ubuntu-18.04
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - name: bump version
+      run: make bump
+    - name: commit
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "Version Buddy"
+        git add VERSION
+        git commit -m "bump version to $(cat VERSION)"
+        git tag $(cat VERSION)
+    - uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        tags: true
+
+  release:
+    runs-on: ubuntu-18.04
+    needs: bump
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v10
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+    - name: set env
+      run: |
+        echo '::set-env name=VERSION::$(cat VERSION)'
+    - name: build
+      run: make
+    - uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        draft: false
+        prerelease: false
