@@ -27,7 +27,7 @@ jobs:
         git add VERSION
         git commit -m "bump version to $(cat VERSION)"
         git tag $(cat VERSION)
-    - uses: ad-m/github-push-action@0.6
+    - uses: ad-m/github-push-action@v0.6.0
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         tags: true
